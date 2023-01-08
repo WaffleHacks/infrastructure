@@ -1,0 +1,48 @@
+set dotenv-load
+
+# List all the tasks
+list:
+  @just --list --unsorted
+
+# Initialize packer and terraform
+init:
+  terraform init
+  packer init .
+
+# Build the base image
+image *FLAGS: variables
+  packer build {{FLAGS}} --var-file=variables.auto.pkrvars.hcl vault.pkr.hcl
+
+# Plan the infrastructure changes
+plan *FLAGS: variables
+  terraform plan {{FLAGS}}
+
+# Generate the variable files from the environment
+variables:
+  #!/usr/bin/env sh
+
+  cat > variables.auto.pkrvars.hcl <<EOF
+  bucket_name = "$PACKER_BUCKET"
+  region = "$REGION"
+  EOF
+
+  cat > variables.auto.tfvars <<EOF
+  hcp_client_id = "$HCP_CLIENT_ID"
+  hcp_client_secret = "$HCP_CLIENT_SECRET"
+  packer_bucket = "$PACKER_BUCKET"
+  packer_channel = "$PACKER_CHANNEL"
+  region = "$REGION"
+  EOF
+
+# Format the configuration
+fmt:
+  terraform fmt .
+  packer fmt .
+
+# Validate the configuration
+validate: fmt
+  terraform validate .
+  packer validate --var-file=variables.auto.pkrvars.hcl vault.pkr.hcl
+
+alias f := fmt
+alias v := validate
