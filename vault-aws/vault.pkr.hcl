@@ -76,19 +76,19 @@ build {
   }
 
 
-  // hcp_packer_registry {
-  //   bucket_name = var.bucket_name
-  //   description = "An image pre-configured to launch HashiCorp Vault backed by AWS DynamoDB with AWS KMS for auto-unseal."
+  hcp_packer_registry {
+    bucket_name = var.bucket_name
+    description = "An image pre-configured to launch HashiCorp Vault backed by AWS DynamoDB with AWS KMS for auto-unseal."
 
-  //   bucket_labels = {
-  //     "os"   = "linux"
-  //     "arch" = local.architecture
-  //   }
+    bucket_labels = {
+      "os"   = "linux"
+      "arch" = local.architecture
+    }
 
-  //   build_labels = {
-  //     "version" = local.vault_version
-  //     "os"      = local.os
-  //     "at"      = timestamp()
-  //   }
-  // }
+    build_labels = {
+      "version" = local.vault_version
+      "os"      = local.os
+      "at"      = timestamp()
+    }
+  }
 }
