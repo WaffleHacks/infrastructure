@@ -75,7 +75,11 @@ build {
     script = "scripts/install.sh"
   }
 
-  # Install nginx
+  # Install & configure nginx
+  provisioner "file" {
+    source      = "config/nginx.conf"
+    destination = "/tmp/vault.conf"
+  }
   provisioner "shell" {
     script = "scripts/proxy.sh"
   }
