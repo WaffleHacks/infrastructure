@@ -75,6 +75,10 @@ build {
     script = "scripts/install.sh"
   }
 
+  # Install nginx
+  provisioner "shell" {
+    script = "scripts/proxy.sh"
+  }
 
   hcp_packer_registry {
     bucket_name = var.bucket_name

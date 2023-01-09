@@ -2,9 +2,11 @@
 
 export DEBIAN_FRONTEND=noninteractive
 
+set -eux -o pipefail
+
 # Setup NTP
 sudo apt-get update
-sudo apt-get install -y ntp wget
+sudo apt-get install -y gnupg ntp wget
 
 sudo systemctl start ntp
 sudo systemctl enable ntp
