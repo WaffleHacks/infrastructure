@@ -75,15 +75,6 @@ build {
     script = "scripts/install.sh"
   }
 
-  # Install & configure nginx
-  provisioner "file" {
-    source      = "config/nginx.conf"
-    destination = "/tmp/vault.conf"
-  }
-  provisioner "shell" {
-    script = "scripts/proxy.sh"
-  }
-
   hcp_packer_registry {
     bucket_name = var.bucket_name
     description = "An image pre-configured to launch HashiCorp Vault backed by AWS DynamoDB with AWS KMS for auto-unseal."
