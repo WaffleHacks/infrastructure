@@ -75,6 +75,18 @@ build {
     script = "scripts/install.sh"
   }
 
+  # Update Cloudflare origin certificate weekly
+  provisioner "file" {
+    destination = "/tmp/update-origin-certificate.sh"
+    source      = "scripts/update-origin-certificate.sh"
+  }
+  provisioner "shell" {
+    inline = [
+      "sudo mv /tmp/update-origin-certificate.sh /etc/cron.weekly/update-origin-certificate.sh",
+      "sudo chmod +x /etc/cron.weekly/update-origin-certificate.sh",
+    ]
+  }
+
   hcp_packer_registry {
     bucket_name = var.bucket_name
     description = "An image pre-configured to launch HashiCorp Vault backed by AWS DynamoDB with AWS KMS for auto-unseal."

@@ -59,3 +59,4 @@ terraform.rc
 ### Project Files ###
 .env
 ec2_*.pem
+instance.pem

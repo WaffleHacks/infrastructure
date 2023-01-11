@@ -27,11 +27,16 @@ variables:
   EOF
 
   cat > variables.auto.tfvars <<EOF
+  cloudflare_token = "$CLOUDFLARE_API_TOKEN"
+  domain = "$DOMAIN"
+  dynamodb_table = "$DYNAMODB_TABLE"
+  enable_ssh = "$ENABLE_SSH"
   hcp_client_id = "$HCP_CLIENT_ID"
   hcp_client_secret = "$HCP_CLIENT_SECRET"
   packer_bucket = "$PACKER_BUCKET"
   packer_channel = "$PACKER_CHANNEL"
   region = "$REGION"
+  subdomain = "$SUBDOMAIN"
   EOF
 
 # Format the configuration
@@ -46,3 +51,11 @@ validate: fmt
 
 alias f := fmt
 alias v := validate
+
+# Run tests in CI
+ci: check-fmt validate
+
+# Check that the formatting is correct
+check-fmt:
+  terraform fmt --check --diff .
+  packer fmt --check --diff .
