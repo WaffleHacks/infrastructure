@@ -1,0 +1,34 @@
+set dotenv-load
+
+# List all the tasks
+list:
+  @just --list --unsorted
+
+# Initialize terraform providers
+init:
+  terraform init .
+
+# Plan the changes
+plan *FLAGS:
+  terraform plan {{FLAGS}}
+
+# Format the configuration
+fmt:
+  terraform fmt .
+
+# Validate the configuration
+validate: fmt
+  terraform validate .
+
+alias f := fmt
+alias v := validate
+
+# Run tests in CI
+ci: check-fmt validate
+
+# Check that the formatting is correct
+check-fmt:
+  terraform fmt --check --diff .
+
+import resource id:
+  terraform import {{resource}} {{id}}
