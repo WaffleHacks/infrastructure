@@ -1,11 +1,3 @@
-resource "aws_organizations_organization" "main" {
-  feature_set = "ALL"
-  aws_service_access_principals = [
-    "account.amazonaws.com",
-    "sso.amazonaws.com",
-  ]
-}
-
 data "aws_ssoadmin_instances" "main" {}
 
 locals {

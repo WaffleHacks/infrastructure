@@ -6,7 +6,7 @@ list:
 
 # Initialize terraform providers
 init:
-  terraform init .
+  terraform init
 
 # Plan the changes
 plan *FLAGS:
@@ -14,7 +14,7 @@ plan *FLAGS:
 
 # Format the configuration
 fmt:
-  terraform fmt .
+  terraform fmt --recursive .
 
 # Validate the configuration
 validate: fmt
@@ -28,7 +28,7 @@ ci: check-fmt validate
 
 # Check that the formatting is correct
 check-fmt:
-  terraform fmt --check --diff .
+  terraform fmt --recursive --check --diff .
 
 import resource id:
   terraform import {{resource}} {{id}}
