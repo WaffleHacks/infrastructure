@@ -12,6 +12,12 @@ provider "aws" {
   region = var.region
 }
 
+# Handle configuring the organization accounts
 module "organization" {
   source = "./modules/organization"
+}
+
+# Handle roles for external access from 3rd-party services like GitHub Actions
+module "external" {
+  source = "./modules/external"
 }
