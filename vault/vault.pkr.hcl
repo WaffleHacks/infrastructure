@@ -47,11 +47,11 @@ source "amazon-ebs" "vault" {
   }
 
   tags = {
-    app          = "vault"
-    iteration_id = packer.iterationID
-    os           = local.os
-    source       = "{{ .SourceAMIName }}"
-    version      = local.vault_version
+    App         = "vault"
+    IterationId = packer.iterationID
+    OS          = local.os
+    Source      = "{{ .SourceAMIName }}"
+    Version     = local.vault_version
   }
 
   ssh_username = "admin"
@@ -93,15 +93,15 @@ build {
     description = "An image pre-configured to launch HashiCorp Vault backed by AWS DynamoDB with AWS KMS for auto-unseal."
 
     bucket_labels = {
-      "app"  = "vault"
-      "os"   = "linux"
-      "arch" = local.architecture
+      "App"  = "vault"
+      "OS"   = "linux"
+      "Arch" = local.architecture
     }
 
     build_labels = {
-      "version" = local.vault_version
-      "os"      = local.os
-      "at"      = timestamp()
+      "Version" = local.vault_version
+      "OS"      = local.os
+      "At"      = timestamp()
     }
   }
 }
