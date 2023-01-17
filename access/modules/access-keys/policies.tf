@@ -37,6 +37,7 @@ data "aws_iam_policy_document" "kms" {
       "kms:EnableKeyRotation",
       "kms:GetKeyPolicy",
       "kms:GetKeyRotationStatus",
+      "kms:ListResourceTags",
       "kms:PutKeyPolicy",
       "kms:ScheduleKeyDeletion",
       "kms:TagResource",
@@ -105,6 +106,7 @@ data "aws_iam_policy_document" "ssm_parameters" {
       "ssm:DeleteParameter",
       "ssm:DescribeParameters",
       "ssm:GetParameter",
+      "ssm:GetParameters",
       "ssm:PutParameter",
     ]
     resources = ["*"]
