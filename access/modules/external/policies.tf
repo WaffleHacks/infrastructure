@@ -17,7 +17,7 @@ data "aws_iam_policy_document" "packer_trust_relationship" {
     condition {
       test     = "StringLike"
       variable = "token.actions.githubusercontent.com:sub"
-      values   = ["repo:WaffleHacks/infra:ref:refs/heads/main"]
+      values   = ["repo:WaffleHacks/infrastructure:ref:refs/heads/main"]
     }
   }
 }
