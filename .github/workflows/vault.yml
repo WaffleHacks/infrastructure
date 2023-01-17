@@ -3,6 +3,7 @@ on:
     branches: [main]
     paths:
       - 'vault/**'
+      - '.github/workflows/vault.yml'
 
 jobs:
   packer:
