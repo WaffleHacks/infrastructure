@@ -13,4 +13,6 @@ jobs:
       - uses: hashicorp/setup-packer@main
 
       - run: just init
+
+      - run: cp -r .github/overrides/* .
       - run: just ci

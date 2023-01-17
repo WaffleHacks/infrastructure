@@ -59,14 +59,7 @@ alias v := validate
 alias l := lint
 
 # Run tests in CI
-ci: ci-setup check-fmt validate lint
-
-ci-setup:
-  #!/usr/bin/env sh
-
-  if [[ -n $CI ]]; then
-    cp .env.example .env
-  fi
+ci: check-fmt validate lint
 
 # Check that the formatting is correct
 check-fmt:
