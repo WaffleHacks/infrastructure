@@ -13,4 +13,6 @@ jobs:
       - uses: hashicorp/setup-packer@main
 
       - run: just init
+
+      - run: cp .env.example .env
       - run: just ci
