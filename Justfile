@@ -23,11 +23,8 @@ alias v := validate
 alias l := lint
 
 # Run all tests in CI
-ci: check-fmt validate lint
-
-# Check that the formatting is correct
-check-fmt:
-  @just all check-fmt
+ci:
+  @just all ci
 
 # Run a task on all projects
 all *FLAGS:

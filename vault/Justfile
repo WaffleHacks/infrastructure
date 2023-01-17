@@ -46,7 +46,7 @@ fmt:
   packer fmt .
 
 # Validate the configuration
-validate: fmt
+validate: variables
   terraform validate .
   packer validate --var-file=variables.auto.pkrvars.hcl vault.pkr.hcl
 

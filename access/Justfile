@@ -18,7 +18,7 @@ fmt:
   terraform fmt --recursive .
 
 # Validate the configuration
-validate: fmt
+validate:
   terraform validate .
 
 # Lint the configuration
