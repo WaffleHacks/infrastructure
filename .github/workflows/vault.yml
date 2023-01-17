@@ -28,3 +28,8 @@ jobs:
         working-directory: vault
 
       - run: just sub vault image
+        env:
+          REGION: us-west-2
+          PACKER_BUCKET: vault
+          HCP_CLIENT_ID: ${{ secrets.HCP_CLIENT_ID }}
+          HCP_CLIENT_SECRET: ${{ secrets.HCP_CLIENT_SECRET }}
