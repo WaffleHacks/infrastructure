@@ -7,7 +7,12 @@ terraform {
     }
   }
 
-  cloud {}
+  cloud {
+    organization = "wafflehacks"
+    workspaces {
+      name = "access"
+    }
+  }
 }
 
 provider "aws" {

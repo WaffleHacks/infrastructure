@@ -23,7 +23,12 @@ terraform {
     }
   }
 
-  cloud {}
+  cloud {
+    organization = "wafflehacks"
+    workspaces {
+      name = "vault"
+    }
+  }
 }
 
 provider "aws" {
