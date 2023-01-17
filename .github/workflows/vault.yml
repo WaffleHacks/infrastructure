@@ -23,7 +23,7 @@ jobs:
           role-to-assume: ${{ secrets.AWS_ROLE }}
           role-session-name: ${{ github.run_id }}
 
-      - run: packer init
+      - run: packer init .
         working-directory: vault
 
       - run: just sub vault image
