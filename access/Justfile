@@ -7,6 +7,7 @@ list:
 # Initialize terraform providers
 init:
   terraform init
+  tflint --init
 
 # Plan the changes
 plan *FLAGS:
@@ -20,11 +21,16 @@ fmt:
 validate: fmt
   terraform validate .
 
+# Lint the configuration
+lint:
+  tflint --module
+
 alias f := fmt
 alias v := validate
+alias l := lint
 
 # Run tests in CI
-ci: check-fmt validate
+ci: check-fmt validate lint
 
 # Check that the formatting is correct
 check-fmt:

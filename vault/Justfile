@@ -8,6 +8,7 @@ list:
 init:
   terraform init
   packer init .
+  tflint --init
 
 # Build the base image
 image *FLAGS: variables
@@ -49,11 +50,16 @@ validate: fmt
   terraform validate .
   packer validate --var-file=variables.auto.pkrvars.hcl vault.pkr.hcl
 
+# Lint the configuration
+lint:
+  tflint --module
+
 alias f := fmt
 alias v := validate
+alias l := lint
 
 # Run tests in CI
-ci: check-fmt validate
+ci: check-fmt validate lint
 
 # Check that the formatting is correct
 check-fmt:
