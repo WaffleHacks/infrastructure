@@ -6,6 +6,8 @@ terraform {
       version = "~> 4.49.0"
     }
   }
+
+  cloud {}
 }
 
 provider "aws" {
