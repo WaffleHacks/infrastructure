@@ -47,6 +47,7 @@ source "amazon-ebs" "vault" {
   }
 
   tags = {
+    app          = "vault"
     iteration_id = packer.iterationID
     os           = local.os
     source       = "{{ .SourceAMIName }}"
@@ -92,6 +93,7 @@ build {
     description = "An image pre-configured to launch HashiCorp Vault backed by AWS DynamoDB with AWS KMS for auto-unseal."
 
     bucket_labels = {
+      "app"  = "vault"
       "os"   = "linux"
       "arch" = local.architecture
     }
