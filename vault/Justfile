@@ -24,20 +24,20 @@ variables:
 
   cat > variables.auto.pkrvars.hcl <<EOF
   bucket_name = "$PACKER_BUCKET"
-  region = "$REGION"
+  region      = "$REGION"
   EOF
 
   cat > variables.auto.tfvars <<EOF
-  cloudflare_token = "$CLOUDFLARE_API_TOKEN"
-  domain = "$DOMAIN"
-  dynamodb_table = "$DYNAMODB_TABLE"
-  enable_ssh = "$ENABLE_SSH"
-  hcp_client_id = "$HCP_CLIENT_ID"
+  cloudflare_token  = "$CLOUDFLARE_API_TOKEN"
+  domain            = "$DOMAIN"
+  dynamodb_table    = "$DYNAMODB_TABLE"
+  enable_ssh        = ${ENABLE_SSH:-false}
+  hcp_client_id     = "$HCP_CLIENT_ID"
   hcp_client_secret = "$HCP_CLIENT_SECRET"
-  packer_bucket = "$PACKER_BUCKET"
-  packer_channel = "$PACKER_CHANNEL"
-  region = "$REGION"
-  subdomain = "$SUBDOMAIN"
+  packer_bucket     = "$PACKER_BUCKET"
+  packer_channel    = "$PACKER_CHANNEL"
+  region            = "$REGION"
+  subdomain         = "$SUBDOMAIN"
   EOF
 
 # Format the configuration
@@ -59,7 +59,14 @@ alias v := validate
 alias l := lint
 
 # Run tests in CI
-ci: check-fmt validate lint
+ci: ci-setup check-fmt validate lint
+
+ci-setup:
+  #!/usr/bin/env sh
+
+  if [[ -n $CI ]]; then
+    cp .env.example .env
+  fi
 
 # Check that the formatting is correct
 check-fmt:
