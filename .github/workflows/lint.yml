@@ -12,6 +12,7 @@ jobs:
       - uses: hashicorp/setup-terraform@v2
       - uses: hashicorp/setup-packer@main
 
+      - run: echo "TF_TOKEN_app_terraform_io=${{ secrets.TERRAFORM_CLOUD_TOKEN }}" >> $GITHUB_ENV
       - run: just init
 
       - run: cp -r .github/overrides/* .
