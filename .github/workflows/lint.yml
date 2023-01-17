@@ -5,12 +5,12 @@ jobs:
     name: Lint
     runs-on: ubuntu-latest
     steps:
-      - uses: action/checkout@v3
+      - uses: actions/checkout@v3
 
       - uses: taiki-e/install-action@just
       - uses: terraform-linters/setup-tflint@v2
       - uses: hashicorp/setup-terraform@v2
-      - uses: hashicorp/setup-packer@v2
+      - uses: hashicorp/setup-packer@main
 
       - run: just init
       - run: just ci
