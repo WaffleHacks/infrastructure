@@ -1,0 +1,35 @@
+# List all the tasks
+list:
+  @just --list --unsorted
+
+# Initialize packer
+init:
+  packer init .
+
+# Build the image
+build *FLAGS:
+  packer build {{FLAGS}} --var-file=variables.pkrvars.hcl vault.pkr.hcl
+
+# Format the configuration
+fmt:
+  packer fmt .
+
+# Validate the configuration
+validate:
+  #!/usr/bin/env sh
+  if [ ! -f "variables.pkrvars.hcl" ]; then
+    echo -e 'region = "some-region"\nbucket_name = "some-bucket"' > variables.pkrvars.hcl
+  fi
+
+  echo -e "\033[1mpacker validate --var-file=variables.pkrvars.hcl vault.pkr.hcl\033[0m"
+  packer validate --var-file=variables.pkrvars.hcl vault.pkr.hcl
+
+alias f := fmt
+alias v := validate
+
+# Run tests in CI
+ci: check-fmt validate
+
+# Check that the formatting is correct
+check-fmt:
+  packer fmt --check --diff .

@@ -45,7 +45,7 @@ resource "aws_instance" "vault" {
     delete_on_termination = true
   }
 
-  user_data = templatefile("${path.module}/scripts/user-data.sh.tpl", {
+  user_data = templatefile("${path.module}/templates/user-data.sh.tpl", {
     domain = local.domain
 
     region  = var.region

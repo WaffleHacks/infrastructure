@@ -2,25 +2,25 @@
 #   Zone:DNS:Edit
 #   Zone:Origin Rules:Edit
 #   Zone:SSL and Certificates:Edit
-CLOUDFLARE_API_TOKEN=your-token-here
+cloudflare_token = "your-token-here"
 
 # HashiCorp Cloud Platform service principal key client ID and secret
-HCP_CLIENT_ID=your-client-id-here
-HCP_CLIENT_SECRET=your-client-secret-here
+hcp_client_id     = "your-client-id-here"
+hcp_client_secret = "your-client-secret-here"
 
-# The region to create resources in
-REGION=us-west-2
+# The region to deploy resources to
+region = "us-west-2"
 
 # The HCP Packer Registry bucket and channel to use
-PACKER_BUCKET=vault
-PACKER_CHANNEL=stable
+packer_bucket  = "vault"
+packer_channel = "stable"
 
-# The DynamoDB table to store Vault's state
-DYNAMODB_TABLE=vault-storage
+# The DynamoDB table to store Vault's state in
+dynamodb_table = "vault-storage"
 
 # The domain and subdomain Vault should be accessible at
-DOMAIN=your.domain
-SUBDOMAIN=vault
+domain    = "your.domain"
+subdomain = "vault"
 
 # Allow connecting to the instance over SSH
-ENABLE_SSH=false
+enable_ssh = false

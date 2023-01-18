@@ -14,13 +14,8 @@ fmt:
 validate:
   @just all validate
 
-# Lint all configurations
-lint:
-  @just all lint
-
 alias f := fmt
 alias v := validate
-alias l := lint
 
 # Run all tests in CI
 ci:
@@ -29,8 +24,9 @@ ci:
 # Run a task on all projects
 all *FLAGS:
   #!/usr/bin/env sh
-  for project in access vault; do \
-    just -f ${project}/Justfile {{FLAGS}}; \
+  for project in access vault/deployment vault/image; do
+    echo "Entering ${project}..."
+    just -f ${project}/Justfile {{FLAGS}};
   done
 
 # Run a task in the specificed subproject

@@ -2,7 +2,7 @@ on:
   push:
     branches: [main]
     paths:
-      - 'vault/**'
+      - 'vault/image/**'
       - '.github/workflows/vault.yml'
 
 jobs:
@@ -24,10 +24,17 @@ jobs:
           role-to-assume: ${{ secrets.AWS_ROLE }}
           role-session-name: ${{ github.run_id }}
 
-      - run: packer init .
-        working-directory: vault
+      - run: just init
+        working-directory: vault/image
 
-      - run: just sub vault image
+      - name: Write configuration
+        working-directory: vault/image
+        run: |
+          echo 'region = "us-west-2"' >> variables.pkrvars.hcl
+          echo 'bucket_name = "vault"' >> variables.pkrvars.hcl
+
+      - run: just build
+        working-directory: vault/image
         env:
           REGION: us-west-2
           PACKER_BUCKET: vault
