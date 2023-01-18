@@ -35,6 +35,3 @@ ci: check-fmt validate lint
 # Check that the formatting is correct
 check-fmt:
   terraform fmt --recursive --check --diff .
-
-import resource id:
-  terraform import {{resource}} {{id}}
