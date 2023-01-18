@@ -26,6 +26,8 @@ jobs:
 
       - run: just init
         working-directory: vault/image
+        env:
+          PACKER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Write configuration
         working-directory: vault/image
