@@ -66,4 +66,9 @@ path "identity/group-alias" {
 path "identity/group-alias/*" {
   capabilities = ["list", "read", "update", "delete"]
 }
+
+# Manage shared passwords engine configuration
+path "passwords/config" {
+  capabilities = ["read", "update"]
+}
 ```
