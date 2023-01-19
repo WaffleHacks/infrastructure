@@ -1,7 +1,6 @@
 resource "vault_mount" "passwords" {
   path    = "passwords"
-  type    = "kv"
-  options = { version = "v2" }
+  type    = "kv-v2"
 
   description = "Shared passwords for various services"
 }
