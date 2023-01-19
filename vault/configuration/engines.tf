@@ -7,7 +7,7 @@ resource "vault_mount" "passwords" {
 }
 
 resource "vault_kv_secret_backend_v2" "passwords" {
-  path = vault_mount.passwords.path
+  mount = vault_mount.passwords.path
 
   max_versions = 0 # unlimited
   cas_required = true
