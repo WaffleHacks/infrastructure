@@ -10,7 +10,7 @@ terraform {
   cloud {
     organization = "wafflehacks"
     workspaces {
-      name = "configuration"
+      name = "vault-configuration"
     }
   }
 }

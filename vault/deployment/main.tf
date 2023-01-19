@@ -26,7 +26,7 @@ terraform {
   cloud {
     organization = "wafflehacks"
     workspaces {
-      name = "deployment"
+      name = "vault-deployment"
     }
   }
 }
