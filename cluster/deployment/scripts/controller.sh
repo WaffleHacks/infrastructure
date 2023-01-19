@@ -10,7 +10,9 @@
 #<UDF name="nomad_version" label="Nomad version" />
 # NOMAD_VERSION=
 
-set -e
+exec > >(tee -i /var/log/stackscript.log)
+
+set -ex
 
 source <ssinclude StackScriptID="${shared_stackscript_id}">
 

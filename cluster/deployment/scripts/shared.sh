@@ -6,7 +6,7 @@ CODENAME=$(lsb_release -cs)
 function install_dependencies {
   # Upgrade system
   apt-get update
-  apt-get upgrade
+  apt-get upgrade -y
 
   # Install dependencies
   DEBIAN_FRONTEND=noninteractive apt-get install -y \
@@ -90,4 +90,6 @@ function system_setup {
   setup_hashicorp_repository
   install_consul $1 $2
   install_nomad $3
+
+  printf "system_setup(): complete\n"
 }
