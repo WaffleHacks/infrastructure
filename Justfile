@@ -24,7 +24,7 @@ ci:
 # Run a task on all projects
 all *FLAGS:
   #!/usr/bin/env bash
-  for project in access vault/deployment vault/image; do
+  for project in access vault/configuration vault/deployment vault/image; do
     echo "Entering ${project}..."
     just -f ${project}/Justfile {{FLAGS}};
   done
