@@ -20,7 +20,7 @@ system_setup $CONSUL_VERSION $CONSUL_TEMPLATE_VERSION $NOMAD_VERSION
 
 # Configure Consul
 cat <<EOF > /etc/consul.d/consul.hcl
-datacenter = "${region}"
+datacenter = "${datacenter}"
 data_dir = "/opt/consul"
 
 server = true
@@ -32,10 +32,14 @@ advertise_addr = "{{ GetInterfaceIP \"eth0\" }}"
 log_level = "INFO"
 
 bootstrap_expect = ${bootstrap_expect}
-retry_join = ["provider=linode region=${region} tag_name=cluster address_type=private_v4"]
+retry_join = ["provider=linode region=${datacenter} tag_name=cluster address_type=private_v4"]
 
 connect {
   enabled = true
+}
+
+ports {
+  grpc = 8502
 }
 
 ui_config {
@@ -51,5 +55,52 @@ systemctl enable consul.service
 systemctl start consul.service
 
 # Wait for consul to start
-printf "Waiting 30s for Consul to start..."
-sleep 30
+printf "Waiting 15s for Consul to start..."
+sleep 15
+
+# Configure Nomad
+cat <<EOF > /etc/nomad.d/nomad.hcl
+datacenter = "${datacenter}"
+region = "${region}"
+
+data_dir = "/opt/nomad/data"
+
+bind_addr = "0.0.0.0"
+
+advertise {
+  http = "{{ GetInterfaceIP \"eth0\" }}"
+  rpc  = "{{ GetInterfaceIP \"eth1\" }}"
+  serf = "{{ GetInterfaceIP \"eth1\" }}"
+}
+
+client {
+  enabled = true
+}
+
+consul {
+  address = "127.0.0.1:8500"
+  grpc_address = "127.0.0.1:8502"
+
+  auto_advertise = true
+  server_auto_join = true
+  client_auto_join = true
+}
+
+server {
+  enabled = true
+  bootstrap_expect = ${bootstrap_expect}
+}
+
+ui {
+  enabled = true
+}
+EOF
+
+systemctl enable nomad.service
+systemctl start nomad.service
+
+# Wait for nomad to start
+printf "Waiting 15s for Nomad to start..."
+sleep 15
+
+printf "Initialization complete"

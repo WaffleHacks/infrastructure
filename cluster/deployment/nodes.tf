@@ -20,7 +20,8 @@ resource "linode_stackscript" "controller" {
   description = "Sets up a controller node"
 
   script = templatefile("${path.module}/scripts/controller.sh", {
-    region                = var.region
+    datacenter            = var.region
+    region                = data.linode_region.current.country
     shared_stackscript_id = linode_stackscript.shared.id
 
     auto_discovery_token = var.linode_auto_discovery_token
@@ -57,8 +58,6 @@ resource "linode_instance" "controller" {
     purpose = "vlan"
     label   = "cluster-internal"
   }
-
-  root_pass = "b4p0TTuis2TcN50yzTX9KDbUyWeKMceL"
 }
 
 resource "linode_stackscript" "worker" {

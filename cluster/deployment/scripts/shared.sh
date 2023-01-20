@@ -69,6 +69,27 @@ function install_nomad {
   DEBIAN_FRONTEND=noninteractive apt-get install -y nomad=$1
 }
 
+function install_cni {
+  # Install CNI plugins
+
+  version="1.2.0"
+
+  curl -L -o cni-plugins.tgz "https://github.com/containernetworking/plugins/releases/download/v$version/cni-plugins-linux-$ARCH-v$version.tgz"
+  mkdir -p /opt/cni/bin
+  tar -C /opt/cni/bin -xzf cni-plugins.tgz
+  rm cni-plugins.tgz
+}
+
+function configure_forwarding {
+  # Configure IP forwarding
+
+  echo "net.bridge.bridge-nf-call-arptables = 1" >> /etc/sysctl.d/10-cni.conf
+  echo "net.bridge.bridge-nf-call-ip6tables = 1" >> /etc/sysctl.d/10-cni.conf
+  echo "net.bridge.bridge-nf-call-iptables = 1" >> /etc/sysctl.d/10-cni.conf
+
+  sysctl -p
+}
+
 function set_hostname {
   # Generate a random hostname and set it
 
@@ -97,6 +118,9 @@ function system_setup {
   setup_hashicorp_repository
   install_consul $1 $2
   install_nomad $3
+
+  install_cni
+  configure_forwarding
 
   set_hostname
 
