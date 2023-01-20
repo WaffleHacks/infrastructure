@@ -5,13 +5,13 @@ terraform {
       source  = "linode/linode"
       version = "~> 1.29.4"
     }
+    random = {
+      source  = "hashicorp/random"
+      version = "~> 3.4.3"
+    }
   }
 }
 
 provider "linode" {
   token = var.linode_token
-}
-
-locals {
-  image = "linode/debian11"
 }

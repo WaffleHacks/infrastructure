@@ -32,3 +32,9 @@ variable "worker_count" {
   type        = number
   description = "The number of worker nodes to deploy"
 }
+
+variable "enable_ssh" {
+  type        = bool
+  description = "Enable SSH access to the nodes for debugging"
+  default     = false
+}

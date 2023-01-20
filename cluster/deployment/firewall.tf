@@ -68,6 +68,20 @@ resource "linode_firewall" "controller" {
       ipv4     = local.controller_ips
     }
   }
+
+  # SSH
+  dynamic "inbound" {
+    for_each = var.enable_ssh ? [1] : []
+
+    content {
+      label    = "ssh"
+      action   = "ACCEPT"
+      protocol = "TCP"
+      ports    = "22"
+      ipv4     = ["0.0.0.0/0"]
+      ipv6     = ["::/0"]
+    }
+  }
 }
 
 resource "linode_firewall_device" "controller" {
@@ -92,6 +106,20 @@ resource "linode_firewall" "worker" {
       protocol = "TCP"
       ports    = inbound.value
       ipv4     = local.all_ips
+    }
+  }
+
+  # SSH
+  dynamic "inbound" {
+    for_each = var.enable_ssh ? [1] : []
+
+    content {
+      label    = "ssh"
+      action   = "ACCEPT"
+      protocol = "TCP"
+      ports    = "22"
+      ipv4     = ["0.0.0.0/0"]
+      ipv6     = ["::/0"]
     }
   }
 }

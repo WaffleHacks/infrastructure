@@ -1,4 +1,6 @@
 locals {
+  image = "linode/debian11"
+
   stackscript_data = {
     consul_version          = "1.14.3-1"
     consul_template_version = "0.30.0-1"
@@ -29,6 +31,22 @@ resource "linode_stackscript" "controller" {
   images = [local.image]
 }
 
+resource "random_password" "controller" {
+  count = var.controller_count
+
+  length = 64
+
+  lower   = true
+  upper   = true
+  numeric = true
+  special = true
+
+  min_lower   = 4
+  min_upper   = 4
+  min_numeric = 4
+  min_special = 4
+}
+
 resource "linode_instance" "controller" {
   count = var.controller_count
 
@@ -37,6 +55,8 @@ resource "linode_instance" "controller" {
 
   type   = var.controller_type
   region = var.region
+
+  root_pass = random_password.controller[count.index].result
 
   private_ip       = true
   backups_enabled  = false
@@ -74,6 +94,22 @@ resource "linode_stackscript" "worker" {
   images = [local.image]
 }
 
+resource "random_password" "worker" {
+  count = var.worker_count
+
+  length = 64
+
+  lower   = true
+  upper   = true
+  numeric = true
+  special = true
+
+  min_lower   = 4
+  min_upper   = 4
+  min_numeric = 4
+  min_special = 4
+}
+
 resource "linode_instance" "worker" {
   count = var.worker_count
 
@@ -82,6 +118,8 @@ resource "linode_instance" "worker" {
 
   type   = var.worker_type
   region = var.region
+
+  root_pass = random_password.worker[count.index].result
 
   private_ip       = true
   backups_enabled  = false
