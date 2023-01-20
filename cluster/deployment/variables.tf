@@ -3,6 +3,11 @@ variable "linode_token" {
   description = "The Linode API token to authenticate with"
 }
 
+variable "linode_auto_discovery_token" {
+  type        = string
+  description = "The Linode API token used for auto-discovering nodes. Must have the `linodes:read` permission."
+}
+
 variable "region" {
   type        = string
   description = "The region to deploy nodes in"

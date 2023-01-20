@@ -1,6 +1,9 @@
 # The Linode API token to authenticate with
 linode_token = "your-token-here"
 
+# The Linode API token used for auto-discovering nodes. Must have the `linodes:read` permission.
+linode_auto_discovery_token = "your-token-here"
+
 # The region to deploy nodes in
 region = "us-central"
 

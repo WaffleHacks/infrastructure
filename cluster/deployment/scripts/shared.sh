@@ -69,6 +69,13 @@ function install_nomad {
   DEBIAN_FRONTEND=noninteractive apt-get install -y nomad=$1
 }
 
+function set_hostname {
+  # Generate a random hostname and set it
+
+  hostname=$(tr -dc a-z0-9 < /dev/urandom | head -c 16)
+  hostnamectl set-hostname $hostname
+}
+
 function system_setup {
   # Setup the system
   #
@@ -90,6 +97,8 @@ function system_setup {
   setup_hashicorp_repository
   install_consul $1 $2
   install_nomad $3
+
+  set_hostname
 
   printf "system_setup(): complete\n"
 }
