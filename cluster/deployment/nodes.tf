@@ -3,29 +3,27 @@ locals {
     consul_version          = "1.14.3-1"
     consul_template_version = "0.30.0-1"
     nomad_version           = "1.4.3-1"
+    cni_version             = "1.2.0"
   }
-}
-
-resource "linode_stackscript" "shared" {
-  label       = "shared"
-  description = "Shared functions between controller and worker nodes"
-
-  script = file("${path.module}/scripts/shared.sh")
-
-  images = [local.image]
 }
 
 resource "linode_stackscript" "controller" {
   label       = "cluster-controller"
   description = "Sets up a controller node"
 
-  script = templatefile("${path.module}/scripts/controller.sh", {
-    datacenter            = var.region
-    region                = data.linode_region.current.country
-    shared_stackscript_id = linode_stackscript.shared.id
-
+  script = templatefile("${path.module}/scripts/setup.sh", {
     auto_discovery_token = var.linode_auto_discovery_token
-    bootstrap_expect     = var.controller_count
+    post_setup           = ""
+
+    consul_config = templatefile("${path.module}/configs/controller/consul.hcl.tpl", {
+      datacenter       = var.region
+      bootstrap_expect = var.controller_count
+    })
+    nomad_config = templatefile("${path.module}/configs/controller/nomad.hcl.tpl", {
+      datacenter       = var.region
+      region           = data.linode_region.current.country
+      bootstrap_expect = var.controller_count
+    })
   })
 
   images = [local.image]
@@ -64,8 +62,13 @@ resource "linode_stackscript" "worker" {
   label       = "cluster-worker"
   description = "Sets up a worker node"
 
-  script = templatefile("${path.module}/scripts/worker.sh", {
-    shared_stackscript_id = linode_stackscript.shared.id
+  script = templatefile("${path.module}/scripts/setup.sh", {
+    auto_discovery_token = var.linode_auto_discovery_token
+
+    # TODO: add these
+    post_setup    = ""
+    consul_config = ""
+    nomad_config  = ""
   })
 
   images = [local.image]
