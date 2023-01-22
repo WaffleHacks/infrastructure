@@ -93,9 +93,14 @@ resource "linode_stackscript" "worker" {
     letsencrypt_email = var.letsencrypt_email
 
     # TODO: add these
-    post_setup    = ""
-    consul_config = ""
-    nomad_config  = ""
+    post_setup = ""
+    consul_config = templatefile("${path.module}/configs/worker/consul.hcl.tpl", {
+      datacenter = var.region
+    })
+    nomad_config = templatefile("${path.module}/configs/worker/nomad.hcl.tpl", {
+      datacenter = var.region
+      region     = data.linode_region.current.country
+    })
   })
 
   images = [local.image]
