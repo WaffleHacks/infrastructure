@@ -1,6 +1,10 @@
 terraform {
   required_version = ">= 1.3.0"
   required_providers {
+    cloudflare = {
+      source  = "cloudflare/cloudflare"
+      version = "~> 3.32.0"
+    }
     linode = {
       source  = "linode/linode"
       version = "~> 1.29.4"
@@ -10,6 +14,10 @@ terraform {
       version = "~> 3.4.3"
     }
   }
+}
+
+provider "cloudflare" {
+  api_token = var.cloudflare_token
 }
 
 provider "linode" {

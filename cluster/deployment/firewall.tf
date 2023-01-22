@@ -3,6 +3,10 @@ locals {
   worker_ips     = [for instance in linode_instance.worker : "${instance.private_ip_address}/32"]
   all_ips        = flatten([local.controller_ips, local.worker_ips])
 
+  public_ports = {
+    "http"  = "80"
+    "https" = "443"
+  }
   serf_ports = {
     "consul-serf-lan" = "8301"
     "consul-serf-wan" = "8302"
@@ -16,11 +20,26 @@ locals {
   }
 }
 
+data "cloudflare_ip_ranges" "all" {}
+
 resource "linode_firewall" "controller" {
   label = "controller-firewall"
 
   inbound_policy  = "DROP"
   outbound_policy = "ACCEPT"
+
+  dynamic "inbound" {
+    for_each = local.public_ports
+
+    content {
+      label    = inbound.key
+      action   = "ACCEPT"
+      protocol = "TCP"
+      ports    = inbound.value
+      ipv4     = data.cloudflare_ip_ranges.all.ipv4_cidr_blocks
+      ipv6     = data.cloudflare_ip_ranges.all.ipv6_cidr_blocks
+    }
+  }
 
   dynamic "inbound" {
     for_each = local.shared_ports
@@ -96,6 +115,19 @@ resource "linode_firewall" "worker" {
 
   inbound_policy  = "DROP"
   outbound_policy = "ACCEPT"
+
+  dynamic "inbound" {
+    for_each = local.public_ports
+
+    content {
+      label    = inbound.key
+      action   = "ACCEPT"
+      protocol = "TCP"
+      ports    = inbound.value
+      ipv4     = data.cloudflare_ip_ranges.all.ipv4_cidr_blocks
+      ipv6     = data.cloudflare_ip_ranges.all.ipv6_cidr_blocks
+    }
+  }
 
   dynamic "inbound" {
     for_each = local.shared_ports

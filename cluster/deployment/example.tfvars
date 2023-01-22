@@ -1,3 +1,9 @@
+# The Cloudflare API token to authenticate with
+cloudflare_token = "your-token-here"
+
+# The Cloudflare API token used for Let's Encrypt DNS challenges. Must have the `Zone:Zone:Read` and `Zone:DNS:Edit` permissions.
+cloudflare_letsencrypt_token = "your-token-here"
+
 # The Linode API token to authenticate with
 linode_token = "your-token-here"
 
@@ -17,3 +23,6 @@ worker_count     = 2
 # The type of node to deploy
 controller_type = "g6-standard-2"
 worker_type     = "g6-standard-1"
+
+# The email address to use for Let's Encrypt certificate expiry notifications
+letsencrypt_email = "your@email.com"

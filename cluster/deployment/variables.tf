@@ -1,3 +1,13 @@
+variable "cloudflare_token" {
+  type        = string
+  description = "The Cloudflare API token to authenticate with"
+}
+
+variable "cloudflare_letsencrypt_token" {
+  type        = string
+  description = "The Cloudflare API token used for Let's Encrypt DNS challenges. Must have the `Zone:Zone:Read` and `Zone:DNS:Edit` permissions."
+}
+
 variable "linode_token" {
   type        = string
   description = "The Linode API token to authenticate with"
@@ -37,4 +47,9 @@ variable "enable_ssh" {
   type        = bool
   description = "Enable SSH access to the nodes for debugging"
   default     = false
+}
+
+variable "letsencrypt_email" {
+  type        = string
+  description = "The email address to use for Let's Encrypt certificate expiry notifications"
 }

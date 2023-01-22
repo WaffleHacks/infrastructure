@@ -6,6 +6,7 @@ locals {
     consul_template_version = "0.30.0-1"
     nomad_version           = "1.4.3-1"
     cni_version             = "1.2.0"
+    traefik_version         = "2.9.6"
   }
 }
 
@@ -15,8 +16,11 @@ resource "linode_stackscript" "controller" {
 
   script = templatefile("${path.module}/scripts/setup.sh", {
     auto_discovery_token = var.linode_auto_discovery_token
-    post_setup           = ""
+    cloudflare_api_token = var.cloudflare_letsencrypt_token
 
+    letsencrypt_email = var.letsencrypt_email
+
+    post_setup = ""
     consul_config = templatefile("${path.module}/configs/controller/consul.hcl.tpl", {
       datacenter       = var.region
       bootstrap_expect = var.controller_count
@@ -84,6 +88,9 @@ resource "linode_stackscript" "worker" {
 
   script = templatefile("${path.module}/scripts/setup.sh", {
     auto_discovery_token = var.linode_auto_discovery_token
+    cloudflare_api_token = var.cloudflare_letsencrypt_token
+
+    letsencrypt_email = var.letsencrypt_email
 
     # TODO: add these
     post_setup    = ""
