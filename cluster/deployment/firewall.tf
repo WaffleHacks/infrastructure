@@ -1,10 +1,10 @@
 locals {
-  controller_ips = [for instance in linode_instance.controller : "${instance.private_ip_address}/32"]
-  worker_ips     = [for instance in linode_instance.worker : "${instance.private_ip_address}/32"]
-  node_ips       = flatten([local.controller_ips, local.worker_ips])
+  controller_private_ips = [for instance in linode_instance.controller : "${instance.private_ip_address}/32"]
+  worker_private_ips     = [for instance in linode_instance.worker : "${instance.private_ip_address}/32"]
+  node_private_ips       = flatten([local.controller_private_ips, local.worker_private_ips])
 
   public_ports = {
-    "http"  = 80  
+    "http"  = 80
     "https" = 443
   }
   internal_tcp_ports = {
@@ -53,19 +53,7 @@ resource "linode_firewall" "node" {
       action   = "ACCEPT"
       protocol = "TCP"
       ports    = inbound.value
-      ipv4     = local.node_ips
-    }
-  }
-
-  dynamic "inbound" {
-    for_each = local.internal_tcp_ports
-
-    content {
-      label    = inbound.key
-      action   = "ACCEPT"
-      protocol = "TCP"
-      ports    = inbound.value
-      ipv4     = local.controller_ips
+      ipv4     = local.node_private_ips
     }
   }
 
@@ -77,7 +65,7 @@ resource "linode_firewall" "node" {
       action   = "ACCEPT"
       protocol = "UDP"
       ports    = inbound.value
-      ipv4     = local.controller_ips
+      ipv4     = local.node_private_ips
     }
   }
 
@@ -101,8 +89,8 @@ resource "time_sleep" "node_firewall" {
 
   create_duration = "3s"
   triggers = {
-    controller_ips = join(" ", local.controller_ips)
-    worker_ips     = join(" ", local.worker_ips)
+    controller_ips = join(" ", local.controller_private_ips)
+    worker_ips     = join(" ", local.worker_private_ips)
   }
 }
 

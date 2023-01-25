@@ -49,7 +49,30 @@ variable "enable_ssh" {
   default     = false
 }
 
+variable "letsencrypt_staging" {
+  type        = bool
+  description = "Use Let's Encrypt staging environment for testing"
+  default     = false
+}
+
 variable "letsencrypt_email" {
   type        = string
   description = "The email address to use for Let's Encrypt certificate expiry notifications"
+}
+
+variable "domain" {
+  type        = string
+  description = "The base domain to use for the cluster"
+}
+
+variable "consul_subdomain" {
+  type        = string
+  description = "The subdomain to use for Consul"
+  default     = "consul"
+}
+
+variable "nomad_subdomain" {
+  type        = string
+  description = "The subdomain to use for Nomad"
+  default     = "nomad"
 }

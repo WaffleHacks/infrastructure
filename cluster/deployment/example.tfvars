@@ -24,5 +24,13 @@ worker_count     = 2
 controller_type = "g6-standard-2"
 worker_type     = "g6-standard-1"
 
+# Whether to use Let's Encrypt staging certificates (for testing)
+letsencrypt_staging = false
+
 # The email address to use for Let's Encrypt certificate expiry notifications
 letsencrypt_email = "your@email.com"
+
+# Service domain configuration
+domain           = "wafflehacks.cloud"
+consul_subdomain = "consul"
+nomad_subdomain  = "nomad"

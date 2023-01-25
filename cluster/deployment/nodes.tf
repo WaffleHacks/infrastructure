@@ -16,11 +16,18 @@ resource "linode_stackscript" "controller" {
 
   script = templatefile("${path.module}/scripts/setup.sh", {
     auto_discovery_token = var.linode_auto_discovery_token
-    cloudflare_api_token = var.cloudflare_letsencrypt_token
 
-    letsencrypt_email = var.letsencrypt_email
+    post_setup_hooks = [
+      templatefile("${path.module}/scripts/traefik.sh", {
+        cloudflare_api_token = var.cloudflare_letsencrypt_token
 
-    post_setup = ""
+        letsencrypt_email   = var.letsencrypt_email
+        letsencrypt_staging = var.letsencrypt_staging
+
+        consul_fqdn = local.consul_fqdn
+        nomad_fqdn  = local.nomad_fqdn
+      }),
+    ]
     consul_config = templatefile("${path.module}/configs/controller/consul.hcl.tpl", {
       datacenter       = var.region
       bootstrap_expect = var.controller_count
@@ -80,6 +87,12 @@ resource "linode_instance" "controller" {
     purpose = "vlan"
     label   = "cluster-internal"
   }
+
+  lifecycle {
+    replace_triggered_by = [
+      linode_stackscript.controller.script,
+    ]
+  }
 }
 
 resource "linode_stackscript" "worker" {
@@ -88,12 +101,8 @@ resource "linode_stackscript" "worker" {
 
   script = templatefile("${path.module}/scripts/setup.sh", {
     auto_discovery_token = var.linode_auto_discovery_token
-    cloudflare_api_token = var.cloudflare_letsencrypt_token
 
-    letsencrypt_email = var.letsencrypt_email
-
-    # TODO: add these
-    post_setup = ""
+    post_setup_hooks = []
     consul_config = templatefile("${path.module}/configs/worker/consul.hcl.tpl", {
       datacenter = var.region
     })
@@ -150,6 +159,12 @@ resource "linode_instance" "worker" {
   interface {
     purpose = "vlan"
     label   = "cluster-internal"
+  }
+
+  lifecycle {
+    replace_triggered_by = [
+      linode_stackscript.worker.script,
+    ]
   }
 }
 
