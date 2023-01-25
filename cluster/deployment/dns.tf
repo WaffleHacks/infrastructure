@@ -2,14 +2,8 @@ locals {
   consul_fqdn = "${var.consul_subdomain}.${var.domain}"
   nomad_fqdn  = "${var.nomad_subdomain}.${var.domain}"
 
-  node_ipv4 = merge(
-    { for i, instance in linode_instance.controller : "controller-${i}" => instance.ip_address },
-    # { for i, instance in linode_instance.worker : "worker-${i}" => instance.ip_address }
-  )
-  node_ipv6 = merge(
-    { for i, instance in linode_instance.controller : "controller-${i}" => trimsuffix(instance.ipv6, "/128") },
-    # { for i, instance in linode_instance.worker : "worker-${i}" => trimsuffix(instance.ipv6, "/128") }
-  )
+  node_ipv4 = { for i, instance in linode_instance.controller : "controller-${i}" => instance.ip_address }
+  node_ipv6 = { for i, instance in linode_instance.controller : "controller-${i}" => trimsuffix(instance.ipv6, "/128") }
 }
 
 data "cloudflare_zone" "current" {
