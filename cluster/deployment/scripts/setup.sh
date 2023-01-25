@@ -15,6 +15,14 @@
 #
 #<UDF name="traefik_version" label="Traefik version" />
 # TRAEFIK_VERSION=
+#
+#<UDF name="auto_discovery_token" label="Linode API token for cluster auto-discovery" />
+# AUTO_DISCOVERY_TOKEN=
+%{for name, description in post_setup_udfs~}
+#
+#<UDF name="${name}" label="${description}" />
+# ${upper(name)}=
+%{endfor~}
 
 exec &> >(tee -i /var/log/stackscript.log)
 
@@ -82,7 +90,7 @@ ${consul_config}
 EOF
 
 cat <<EOF > /etc/consul.d/consul.env
-LINODE_TOKEN=${auto_discovery_token}
+LINODE_TOKEN=$AUTO_DISCOVERY_TOKEN
 EOF
 
 systemctl enable consul.service

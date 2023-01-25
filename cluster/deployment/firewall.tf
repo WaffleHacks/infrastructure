@@ -87,7 +87,7 @@ resource "linode_firewall" "node" {
 resource "time_sleep" "node_firewall" {
   depends_on = [linode_firewall.node]
 
-  create_duration = "3s"
+  create_duration = "5s"
   triggers = {
     controller_ips = join(" ", local.controller_private_ips)
     worker_ips     = join(" ", local.worker_private_ips)

@@ -95,8 +95,8 @@ http:
           - url: "http://127.0.0.1:4646"
 EOF
 cat <<EOF > /etc/traefik/traefik.env
-CF_DNS_API_TOKEN=${cloudflare_api_token}
-CF_ZONE_API_TOKEN=${cloudflare_api_token}
+CF_DNS_API_TOKEN=$CLOUDFLARE_API_TOKEN
+CF_ZONE_API_TOKEN=$CLOUDFLARE_API_TOKEN
 EOF
 
 # Setup Traefik systemd service

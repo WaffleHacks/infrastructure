@@ -1,7 +1,7 @@
 locals {
   image = "linode/debian11"
 
-  stackscript_data = {
+  service_versions = {
     consul_version          = "1.14.3-1"
     consul_template_version = "0.30.0-1"
     nomad_version           = "1.4.3-1"
@@ -15,12 +15,11 @@ resource "linode_stackscript" "controller" {
   description = "Sets up a controller node"
 
   script = templatefile("${path.module}/scripts/setup.sh", {
-    auto_discovery_token = var.linode_auto_discovery_token
-
+    post_setup_udfs = {
+      "cloudflare_api_token" = "Cloudflare API token",
+    }
     post_setup_hooks = [
       templatefile("${path.module}/scripts/traefik.sh", {
-        cloudflare_api_token = var.cloudflare_letsencrypt_token
-
         letsencrypt_email   = var.letsencrypt_email
         letsencrypt_staging = var.letsencrypt_staging
 
@@ -76,8 +75,14 @@ resource "linode_instance" "controller" {
   group = "controllers"
   tags  = ["cluster", "controller"]
 
-  stackscript_id   = linode_stackscript.controller.id
-  stackscript_data = local.stackscript_data
+  stackscript_id = linode_stackscript.controller.id
+  stackscript_data = merge(
+    local.service_versions,
+    {
+      auto_discovery_token = var.linode_auto_discovery_token,
+      cloudflare_api_token = var.cloudflare_letsencrypt_token,
+    },
+  )
 
   interface {
     purpose = "public"
@@ -100,9 +105,9 @@ resource "linode_stackscript" "worker" {
   description = "Sets up a worker node"
 
   script = templatefile("${path.module}/scripts/setup.sh", {
-    auto_discovery_token = var.linode_auto_discovery_token
-
+    post_setup_udfs  = {}
     post_setup_hooks = []
+
     consul_config = templatefile("${path.module}/configs/worker/consul.hcl.tpl", {
       datacenter = var.region
     })
@@ -149,8 +154,13 @@ resource "linode_instance" "worker" {
   group = "workers"
   tags  = ["cluster", "worker"]
 
-  stackscript_id   = linode_stackscript.worker.id
-  stackscript_data = local.stackscript_data
+  stackscript_id = linode_stackscript.worker.id
+  stackscript_data = merge(
+    local.service_versions,
+    {
+      auto_discovery_token = var.linode_auto_discovery_token
+    },
+  )
 
   interface {
     purpose = "public"
