@@ -3,7 +3,7 @@ data "aws_identitystore_group" "operations" {
 
   alternate_identifier {
     unique_attribute {
-      attribute_path = "DisplayName"
+      attribute_path  = "DisplayName"
       attribute_value = "Operations"
     }
   }
@@ -14,7 +14,7 @@ data "aws_identitystore_group" "people_communications" {
 
   alternate_identifier {
     unique_attribute {
-      attribute_path = "DisplayName"
+      attribute_path  = "DisplayName"
       attribute_value = "People & Communications"
     }
   }
@@ -25,7 +25,7 @@ data "aws_identitystore_group" "technology" {
 
   alternate_identifier {
     unique_attribute {
-      attribute_path = "DisplayName"
+      attribute_path  = "DisplayName"
       attribute_value = "Technology"
     }
   }
@@ -36,7 +36,7 @@ data "aws_identitystore_group" "administrators" {
 
   alternate_identifier {
     unique_attribute {
-      attribute_path = "DisplayName"
+      attribute_path  = "DisplayName"
       attribute_value = "Administrators"
     }
   }
