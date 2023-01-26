@@ -1,27 +1,43 @@
-resource "aws_identitystore_group" "operations" {
+data "aws_identitystore_group" "operations" {
   identity_store_id = local.identity_store_id
 
-  display_name = "Operations"
-  description  = "The operations team"
+  alternate_identifier {
+    unique_attribute {
+      attribute_path = "DisplayName"
+      attribute_value = "Operations"
+    }
+  }
 }
 
-resource "aws_identitystore_group" "people_communications" {
+data "aws_identitystore_group" "people_communications" {
   identity_store_id = local.identity_store_id
 
-  display_name = "People-Communications"
-  description  = "The people & communications team"
+  alternate_identifier {
+    unique_attribute {
+      attribute_path = "DisplayName"
+      attribute_value = "People & Communications"
+    }
+  }
 }
 
-resource "aws_identitystore_group" "technology" {
+data "aws_identitystore_group" "technology" {
   identity_store_id = local.identity_store_id
 
-  display_name = "Technology"
-  description  = "The technology team"
+  alternate_identifier {
+    unique_attribute {
+      attribute_path = "DisplayName"
+      attribute_value = "Technology"
+    }
+  }
 }
 
-resource "aws_identitystore_group" "administrators" {
+data "aws_identitystore_group" "administrators" {
   identity_store_id = local.identity_store_id
 
-  display_name = "Administrators"
-  description  = "Has full admin access to all organization accounts"
+  alternate_identifier {
+    unique_attribute {
+      attribute_path = "DisplayName"
+      attribute_value = "Administrators"
+    }
+  }
 }
