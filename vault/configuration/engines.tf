@@ -11,3 +11,17 @@ resource "vault_kv_secret_backend_v2" "passwords" {
   max_versions = 0 # unlimited
   cas_required = true
 }
+
+resource "vault_mount" "consul" {
+  path = "consul"
+  type = "consul"
+
+  description = "Generate Consul API tokens dynamically"
+}
+
+resource "vault_mount" "nomad" {
+  path = "nomad"
+  type = "nomad"
+
+  description = "Generate Nomad API tokens dynamically"
+}
