@@ -64,29 +64,12 @@ data "aws_iam_policy_document" "instance" {
     resources = [aws_dynamodb_table.storage.arn]
   }
 
-  # From https://developer.hashicorp.com/vault/docs/secrets/aws#example-iam-policy-for-vault
   statement {
     sid = "VaultAWSSecretEngine"
 
-    effect = "Allow"
-    actions = [
-      "iam:AttachUserPolicy",
-      "iam:CreateAccessKey",
-      "iam:CreateUser",
-      "iam:DeleteAccessKey",
-      "iam:DeleteUser",
-      "iam:DeleteUserPolicy",
-      "iam:DetachUserPolicy",
-      "iam:GetUser",
-      "iam:ListAccessKeys",
-      "iam:ListAttachedUserPolicies",
-      "iam:ListGroupsForUser",
-      "iam:ListUserPolicies",
-      "iam:PutUserPolicy",
-      "iam:AddUserToGroup",
-      "iam:RemoveUserFromGroup",
-    ]
-    resources = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/vault-*"]
+    effect    = "Allow"
+    actions   = ["sts:AssumeRole"]
+    resources = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/Vault*"]
   }
 }
 
