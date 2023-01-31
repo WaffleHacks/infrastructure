@@ -12,15 +12,10 @@ resource "vault_kv_secret_backend_v2" "passwords" {
   cas_required = true
 }
 
-resource "vault_mount" "aws" {
-  path = "aws"
-  type = "aws"
-
-  description = "Generate AWS credentials on the fly"
-}
-
 resource "vault_aws_secret_backend" "aws" {
   path = vault_mount.aws.path
+
+  description = "Generate AWS credentials on the fly"
 
   username_template = <<EOF
   {{ if (eq .Type "STS") }}
