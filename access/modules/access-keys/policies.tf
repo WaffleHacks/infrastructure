@@ -99,6 +99,41 @@ resource "aws_iam_policy" "iam_instance_profile" {
   policy = data.aws_iam_policy_document.iam_instance_profile.json
 }
 
+data "aws_iam_policy_document" "iam_role" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "iam:AttachRolePolicy",
+      "iam:CreateRole",
+      "iam:DeleteRole",
+      "iam:DeleteRolePermissionsBoundary",
+      "iam:DeleteRolePolicy",
+      "iam:DetachRolePolicy",
+      "iam:GetRole",
+      "iam:GetRolePolicy",
+      "iam:ListAttachedRolePolicies",
+      "iam:ListRolePolicies",
+      "iam:PassRole",
+      "iam:PutRolePermissionsBoundary",
+      "iam:PutRolePolicy",
+      "iam:TagRole",
+      "iam:UntagRole",
+      "iam:UpdateAssumeRolePolicy",
+      "iam:UpdateRole",
+      "iam:UpdateRoleDescription",
+    ]
+    resources = ["*"]
+  }
+}
+
+resource "aws_iam_policy" "iam_role" {
+  name        = "TerraformIAMRolePolicy"
+  path        = "/terraform/"
+  description = "Allows Terraform to manage IAM role resources"
+
+  policy = data.aws_iam_policy_document.iam_role.json
+}
+
 data "aws_iam_policy_document" "ssm_parameters" {
   statement {
     effect = "Allow"
