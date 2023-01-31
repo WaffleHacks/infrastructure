@@ -13,8 +13,7 @@ resource "vault_kv_secret_backend_v2" "passwords" {
 }
 
 resource "vault_aws_secret_backend" "aws" {
-  path = vault_mount.aws.path
-
+  path        = "aws"
   description = "Generate AWS credentials on the fly"
 
   username_template = <<EOF
