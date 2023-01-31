@@ -36,7 +36,7 @@ provider "aws" {
 
   default_tags {
     tags = {
-      App = "vault"
+      Project = "vault"
     }
   }
 }

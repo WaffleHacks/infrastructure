@@ -3,8 +3,7 @@ resource "aws_iam_user" "vault" {
   path = "/terraform/"
 
   tags = {
-    App     = "terraform"
-    Project = "vault"
+    ChildProject = "vault"
   }
 }
 
