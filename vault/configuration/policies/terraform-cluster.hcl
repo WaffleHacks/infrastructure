@@ -2,6 +2,11 @@
 ### Allow the cluster terraform project to provision its necessary resources
 ###
 
+# Allow issuing limited child tokens
+path "auth/token/create" {
+  capabilities = ["create", "update"]
+}
+
 # Manages an AWS role for backing up the storage node
 path "aws/roles/cluster-storage-backup" {
   capabilities = ["create", "read", "update", "delete"]
