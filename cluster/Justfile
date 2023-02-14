@@ -1,0 +1,43 @@
+# List all the tasks
+list:
+  @just --list --unsorted
+
+# Initialize terraform
+init:
+  terraform init
+  tflint --init
+
+# Plan the infrastructure changes
+plan *FLAGS:
+  terraform plan {{FLAGS}}
+
+# Format the configuration
+fmt:
+  terraform fmt -recursive .
+
+# Validate the configuration
+validate:
+  terraform validate .
+
+# Lint the configuration
+lint:
+  tflint --module
+
+alias f := fmt
+alias v := validate
+alias l := lint
+
+# Run tests in CI
+ci: check-fmt validate lint
+
+# Check that the formatting is correct
+check-fmt:
+  terraform fmt --check --diff .
+
+ssh module:
+  #!/usr/bin/env bash
+
+  set -e
+
+  ip=$(jq -r '.resources[] | select(.type == "digitalocean_droplet" and .name == "instance" and .module == "module.{{module}}") | .instances[].attributes.ipv4_address' terraform.tfstate)
+  exec ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@"$ip"

@@ -1,20 +1,11 @@
 # Cluster
 
-The application cluster for WaffleHacks powered by [Nomad](https://www.nomadproject.io/) and [Consul](https://www.consul.io/).
+The application cluster for WaffleHacks consisting of 2 node classes: storage and worker.
 
+The storage nodes hold all persistent data for the applications running on the worker nodes.
+They primarily run the PostgreSQL database and Redis cache.
+The also act as the [K3S](https://k3s.io) master nodes for the workers.
 
-### Directories
-
-- `/deployment` - manages the underlying infrastructure
-
-
-### Permissions
-
-The provided token must have at least the following permissions:
-
-| Access       | Read | Write |
-|--------------|:----:|:-----:|
-| Events       | x    |       |
-| Firewalls    | x    | x     |
-| Linodes      | x    | x     |
-| StackScripts | x    | x     |
+The worker nodes run the applications required to power WaffleHacks.
+They also have a local read-only replica of the PostgreSQL database and Redis cache.
+This is to ensure low response times for read-heavy applications at the expense of consistency.

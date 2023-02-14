@@ -1,0 +1,11 @@
+export VAULT_ADDR="${vault.address}"
+export VAULT_FORMAT=json
+
+ROLE_ID="${vault.role_id}"
+SECRET_ID="${vault.secret_id}"
+
+export AWS_REGION="${aws_region}"
+S3_BUCKET="${s3_bucket}"
+
+export PGHOST=/var/run/postgresql
+export PGUSER=postgres
