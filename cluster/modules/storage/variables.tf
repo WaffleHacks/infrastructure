@@ -6,11 +6,6 @@ variable "region" {
   description = "The regions to deploy resources in"
 }
 
-variable "type" {
-  type        = string
-  description = "The type of node to deploy"
-}
-
 variable "vpc" {
   type = object({
     id   = string

@@ -5,9 +5,7 @@ data "digitalocean_ssh_key" "cluster" {
 module "storage" {
   source = "./modules/storage"
 
-  region = var.region
-  type   = "g6-standard-2"
-
+  region  = var.region
   ssh_key = data.digitalocean_ssh_key.cluster.id
 
   vpc = {
@@ -17,4 +15,17 @@ module "storage" {
 
   vault_address = var.vault_address
   backup_bucket = var.storage_backup_bucket
+}
+
+module "agent" {
+  source = "./modules/agent"
+
+  count = 2
+
+  region  = var.region.digitalocean
+  vpc_id  = digitalocean_vpc.cluster.id
+  ssh_key = data.digitalocean_ssh_key.cluster.id
+
+  join_token = module.storage.join_token
+  master_ip  = module.storage.internal_address
 }
