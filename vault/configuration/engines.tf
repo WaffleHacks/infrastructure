@@ -16,3 +16,17 @@ resource "vault_aws_secret_backend" "aws" {
   path        = "aws"
   description = "Generate AWS credentials on te fly"
 }
+
+resource "vault_mount" "services" {
+  path = "services"
+  type = "kv-v2"
+
+  description = "Credentials and secrets for various cluster services"
+}
+
+resource "vault_kv_secret_backend_v2" "services" {
+  mount = vault_mount.services.path
+
+  max_versions = 0 # unlimited
+  cas_required = true
+}
