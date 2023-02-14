@@ -11,7 +11,8 @@ path "auth/token/create" {
 path "aws/roles/cluster-storage-backup" {
   capabilities = ["create", "read", "update", "delete"]
   allowed_parameters = {
-    credential_type = ["assume_role"]
+    credential_type = ["assumed_role"]
+    role_arns = []
   }
 }
 
@@ -19,13 +20,26 @@ path "aws/roles/cluster-storage-backup" {
 path "auth/approle/role/cluster-storage-backup" {
   capabilities = ["create", "read", "update", "delete"]
   allowed_parameters = {
-    policies = ["aws-credentials"]
-    token_max_ttl = ["15m"]
+    bind_secret_id = [true]
+
+    token_type = ["default"]
+    token_ttl = []
+    token_max_ttl = []
+    token_policies = [["aws-credentials"]]
   }
 }
+path "auth/approle/role/cluster-storage-backup/role-id" {
+  capabilities = ["read"]
+}
 path "auth/approle/role/cluster-storage-backup/secret-id" {
-  capabilities = ["create", "list"]
+  capabilities = ["create", "update"]
   allowed_parameters = {
     metadata = ["{\"aws_role\":\"cluster-storage-backup\"}"]
   }
-} 
+}
+path "auth/approle/role/cluster-storage-backup/secret-id-accessor/lookup" {
+  capabilities = ["update"]
+}
+path "auth/approle/role/cluster-storage-backup/secret-id-accessor/destroy" {
+  capabilities = ["update"]
+}

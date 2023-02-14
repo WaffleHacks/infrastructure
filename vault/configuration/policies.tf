@@ -11,3 +11,10 @@ resource "vault_policy" "policies" {
   name   = each.key
   policy = file(each.value)
 }
+
+resource "vault_policy" "aws_credentials" {
+  name = "aws-credentials"
+  policy = templatefile("${path.module}/policies/templated/aws-credentials.hcl", {
+    approle_mount = data.vault_auth_backend.approle.accessor
+  })
+}
