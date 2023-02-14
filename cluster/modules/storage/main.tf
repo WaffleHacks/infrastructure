@@ -48,6 +48,11 @@ data "vault_kv_secret_v2" "digitalocean_ccm" {
   name  = "digitalocean-ccm"
 }
 
+resource "vault_approle_auth_backend_role_secret_id" "external_secrets" {
+  backend   = "approle"
+  role_name = "cluster-external-secrets"
+}
+
 resource "digitalocean_droplet" "instance" {
   name = "storage-${random_string.suffix.result}"
 
@@ -91,6 +96,9 @@ resource "digitalocean_droplet" "instance" {
       digitalocean_access_token = data.vault_kv_secret_v2.digitalocean_ccm.data["access-token"]
 
       vpc_id = var.vpc.id
+    })
+    manifest_vault_credentials = templatefile("${path.module}/user-data/manifests/vault-credentials.yaml", {
+      secret_id = vault_approle_auth_backend_role_secret_id.external_secrets.secret_id
     })
   })
 }

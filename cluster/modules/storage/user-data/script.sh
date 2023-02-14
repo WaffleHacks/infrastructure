@@ -89,8 +89,13 @@ sudo -u postgres createdb --owner k3s k3s
 curl -sfL https://get.k3s.io | K3S_TOKEN=${join_token} K3S_DATASTORE_ENDPOINT=postgres://k3s:$pg_k3s_password@127.0.0.1:5432/k3s?sslmode=disable sh -s - server --node-ip $PRIVATE_IP --disable traefik --disable servicelb --disable-cloud-controller --kubelet-arg="provider-id=digitalocean://$INSTANCE_ID" --kubelet-arg="cloud-provider=external"
 sleep 15
 
-# Deploy DigitalOcean CCM
+# Add Vault credentials for External Secret Operator
 mkdir -p /var/lib/rancher/k3s/server/manifests/
+cat <<EOF > /var/lib/rancher/k3s/server/manifests/vault-credentials.yaml
+${manifest_vault_credentials}
+EOF
+
+# Deploy DigitalOcean CCM
 cat <<EOF > /var/lib/rancher/k3s/server/manifests/digitalocean-ccm.yaml
 ${manifest_digitalocean_ccm}
 EOF

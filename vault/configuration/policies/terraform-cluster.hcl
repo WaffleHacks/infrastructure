@@ -44,6 +44,17 @@ path "auth/approle/role/cluster-storage-backup/secret-id-accessor/destroy" {
   capabilities = ["update"]
 }
 
+# Generate AppRole secret ID for the External Secrets Operator
+path "auth/approle/role/cluster-external-secrets/secret-id" {
+  capabilities = ["create", "update"]
+}
+path "auth/approle/role/cluster-external-secrets/secret-id-accessor/lookup" {
+  capabilities = ["update"]
+}
+path "auth/approle/role/cluster-external-secrets/secret-id-accessor/destroy" {
+  capabilities = ["update"]
+}
+
 # Allow reading services/digitalocean-ccm for initializing the cluster before
 # external-secrets is installed
 path "services/data/digitalocean-ccm" {
