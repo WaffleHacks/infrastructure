@@ -115,6 +115,7 @@ until kubectl -n argocd rollout status deployment/argocd-server; do sleep 1; don
 kubectl config set-context --current --namespace=argocd
 argocd login --core
 
+# Load all apps
 argocd app create apps \
   --dest-namespace argocd \
   --dest-server https://kubernetes.default.svc \
@@ -122,3 +123,9 @@ argocd app create apps \
   --path manifests/apps
 
 argocd app sync apps
+
+# Ensure components are applied in the correct order
+#   - external-secrets
+#   - everything else
+argocd app sync external-secrets
+argocd app sync -l app.kubernetes.io/instance=apps
