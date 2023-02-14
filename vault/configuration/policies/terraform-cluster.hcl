@@ -43,3 +43,9 @@ path "auth/approle/role/cluster-storage-backup/secret-id-accessor/lookup" {
 path "auth/approle/role/cluster-storage-backup/secret-id-accessor/destroy" {
   capabilities = ["update"]
 }
+
+# Allow reading services/digitalocean-ccm for initializing the cluster before
+# external-secrets is installed
+path "services/data/digitalocean-ccm" {
+  capabilities = ["read"]
+}
