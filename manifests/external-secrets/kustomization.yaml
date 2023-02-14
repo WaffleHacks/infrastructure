@@ -4,5 +4,7 @@ kind: Kustomization
 namespace: external-secrets
 
 resources:
+  - base/cluster-secret-store.yaml
+  - base/digitalocean-ccm-secret.yaml
   - base/namespace.yaml
   - https://github.com/external-secrets/external-secrets/releases/download/v0.7.2/external-secrets.yaml
