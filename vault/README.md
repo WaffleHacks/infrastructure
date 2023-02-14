@@ -4,9 +4,8 @@ Provisions a [HashiCorp Vault](https://www.vaultproject.io) instance on [AWS](ht
 
 ### Directories
 
-- `/configuration` - manages the configuration of the Vault instance
-- `/deployment` - manages the underlying infrastructure
 - `/image` - builds the base image for the instance
+- `/instance` - manages the deployment and configuration of the instance
 
 ### Configuration ACL
 
@@ -69,6 +68,29 @@ path "identity/group-alias/*" {
 
 # Manage shared passwords engine configuration
 path "passwords/config" {
+  capabilities = ["read", "update"]
+}
+
+# Manage AWS engine configuration
+path "aws/config/root" {
+  capabilities = ["create", "read", "update"]
+}
+path "aws/config/lease" {
+ 	capabilities = ["create", "read", "update"] 
+}
+
+# Manage AWS engine roles
+path "aws/roles/+" {
+  capabilities = ["create", "read", "update", "delete"]
+}
+
+# Manage AppRoles
+path "auth/approle/*" {
+  capabilities = ["list", "create", "read", "update", "delete"]
+}
+
+# Manage cluster secrets configuration
+path "services/config" {
   capabilities = ["read", "update"]
 }
 ```
