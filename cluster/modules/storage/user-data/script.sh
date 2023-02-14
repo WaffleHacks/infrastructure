@@ -114,3 +114,11 @@ until kubectl -n argocd rollout status deployment/argocd-server; do sleep 1; don
 # Setup Argo CD
 kubectl config set-context --current --namespace=argocd
 argocd login --core
+
+argocd app create apps \
+  --dest-namespace argocd \
+  --dest-server https://kubernetes.default.svc \
+  --repo https://github.com/WaffleHacks/infrastructure.git \
+  --path manifests/apps
+
+argocd app sync apps
