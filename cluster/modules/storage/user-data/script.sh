@@ -142,5 +142,5 @@ for deployment in $(kubectl get deploy -n external-secrets -o name); do
 done
 
 argocd app sync secret-store
-argocd app sync cert-manager external-dns
+argocd app sync cert-manager external-dns contour
 argocd app sync -l app.kubernetes.io/instance=apps
