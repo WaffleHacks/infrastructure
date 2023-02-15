@@ -5,6 +5,7 @@ namespace: external-dns
 
 resources:
   - base/cloudflare-token-secret.yaml
+  - base/namespace.yaml
   - https://github.com/kubernetes-sigs/external-dns/kustomize
 
 patchesStrategicMerge:
