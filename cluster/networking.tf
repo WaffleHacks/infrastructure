@@ -5,19 +5,17 @@ resource "digitalocean_vpc" "cluster" {
   region = var.region.digitalocean
 }
 
+locals {
+  # This is not a variable because we want it to be visible in git when it is changed.
+  allow_ssh = true
+}
+
 resource "digitalocean_firewall" "storage" {
   name = "cluster-storage"
 
   tags = ["cluster", "storage"]
 
   droplet_ids = [module.storage.id]
-
-  # TODO: allow disabling ssh access
-  inbound_rule {
-    protocol         = "tcp"
-    port_range       = "22"
-    source_addresses = ["0.0.0.0/0", "::/0"]
-  }
 
   # Postgres
   inbound_rule {
@@ -47,13 +45,22 @@ resource "digitalocean_firewall" "storage" {
     source_tags = ["cluster"]
   }
 
-
   # Allow traffic from the VPC to NodePorts
   # Temporary fix until https://github.com/digitalocean/digitalocean-cloud-controller-manager/pull/588 is merged
   inbound_rule {
     protocol         = "tcp"
     port_range       = "30000-32767"
     source_addresses = [digitalocean_vpc.cluster.ip_range]
+  }
+
+  # Optional SSH
+  dynamic "inbound_rule" {
+    for_each = local.allow_ssh ? [22] : []
+    content {
+      protocol         = "tcp"
+      port_range       = inbound_rule.value
+      source_addresses = ["0.0.0.0/0", "::/0"]
+    }
   }
 
   dynamic "outbound_rule" {
@@ -70,13 +77,6 @@ resource "digitalocean_firewall" "agent" {
   name = "cluster-agent"
 
   droplet_ids = [for droplet in module.agent : droplet.id]
-
-  # TODO: allow disabling ssh access
-  inbound_rule {
-    protocol         = "tcp"
-    port_range       = "22"
-    source_addresses = ["0.0.0.0/0", "::/0"]
-  }
 
   # Kubelet metrics
   inbound_rule {
@@ -98,6 +98,16 @@ resource "digitalocean_firewall" "agent" {
     protocol         = "tcp"
     port_range       = "30000-32767"
     source_addresses = [digitalocean_vpc.cluster.ip_range]
+  }
+
+  # Optional SSH
+  dynamic "inbound_rule" {
+    for_each = local.allow_ssh ? [22] : []
+    content {
+      protocol         = "tcp"
+      port_range       = inbound_rule.value
+      source_addresses = ["0.0.0.0/0", "::/0"]
+    }
   }
 
   dynamic "outbound_rule" {
