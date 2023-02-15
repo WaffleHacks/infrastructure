@@ -6,4 +6,5 @@ resources:
   - base/contour.yaml
   - base/external-dns.yaml
   - base/external-secrets.yaml
+  - base/governor.yaml
   - base/secret-store.yaml
