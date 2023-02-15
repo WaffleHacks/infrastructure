@@ -16,3 +16,7 @@ spec:
     path: manifests/argocd
     repoURL: https://github.com/WaffleHacks/infrastructure.git
     targetRevision: HEAD
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
