@@ -113,8 +113,10 @@ rm argocd-linux-amd64
 echo "KUBECONFIG=/etc/rancher/k3s/k3s.yaml" >> /etc/environment
 export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
 
-# Wait for Argo CD to be ready
-until kubectl -n argocd rollout status deployment/argocd-server; do sleep 1; done
+# Wait for all Argo CD components to be ready
+for deployment in $(kubectl get deploy -n argocd -o name); do 
+  until kubectl rollout status $deployment -n argocd; do sleep 1; done
+done
 
 # Setup Argo CD
 kubectl config set-context --current --namespace=argocd
