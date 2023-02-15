@@ -3,4 +3,3 @@ kind: Kustomization
 
 resources:
   - base/cluster-secret-store.yaml
-  - base/digitalocean-ccm-secret.yaml
