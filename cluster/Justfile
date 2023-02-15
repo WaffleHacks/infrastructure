@@ -39,5 +39,5 @@ ssh module:
 
   set -e
 
-  ip=$(jq -r '.resources[] | select(.type == "digitalocean_droplet" and .name == "instance" and .module == "module.{{module}}") | .instances[].attributes.ipv4_address' terraform.tfstate)
+  ip=$(terraform state show module.{{module}}.digitalocean_droplet.instance | grep "ipv4_address" | head -n 1 | cut -d= -f2- | tr -d ' "\n')
   exec ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@"$ip"
