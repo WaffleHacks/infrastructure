@@ -7,6 +7,7 @@ resources:
   - base/certificate.yaml
   - base/rollouts-extension.yaml
   - base/route.yaml
+  - base/webhook-secret.yaml
   - https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 
 components:
