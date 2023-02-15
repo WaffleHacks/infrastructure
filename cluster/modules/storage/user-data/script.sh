@@ -135,9 +135,10 @@ argocd app sync apps
 #   - cert-manager
 #   - everything else
 argocd app sync external-secrets
-sleep 10
+for deployment in $(kubectl get deploy -n external-secrets -o name); do 
+  until kubectl rollout status $deployment -n external-secrets; do sleep 1; done
+done
+
 argocd app sync secret-store
-sleep 10
 argocd app sync cert-manager
-sleep 10
 argocd app sync -l app.kubernetes.io/instance=apps
