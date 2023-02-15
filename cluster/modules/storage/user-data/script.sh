@@ -132,7 +132,9 @@ argocd app sync apps
 # Ensure components are applied in the correct order
 #   - external-secrets
 #   - secret-store
+#   - cert-manager
 #   - everything else
 argocd app sync external-secrets
 argocd app sync secret-store
+argocd app sync cert-manager
 argocd app sync -l app.kubernetes.io/instance=apps
