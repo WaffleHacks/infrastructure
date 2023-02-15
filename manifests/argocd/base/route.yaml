@@ -1,0 +1,23 @@
+apiVersion: projectcontour.io/v1
+kind: HTTPProxy
+metadata:
+  name: deploy.wafflehacks.cloud
+spec:
+  virtualhost:
+    fqdn: deploy.wafflehacks.cloud
+    tls:
+      secretName: deploy-wafflehacks-cloud-tls
+  routes:
+    - services:
+        - name: argocd-server
+          port: 80
+      conditions:
+        - prefix: /
+    - services:
+        - name: argocd-server
+          port: 443
+          protocol: h2c
+      conditions:
+        - header:
+            name: Content-Type
+            contains: application/grpc

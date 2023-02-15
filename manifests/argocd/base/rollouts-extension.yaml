@@ -1,0 +1,12 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ArgoCDExtension
+metadata:
+  name: argo-rollouts
+  finalizers:
+  - extensions-finalizer.argocd.argoproj.io
+  annotations:
+    argocd.argoproj.io/sync-wave: "5"
+spec:
+  sources:
+  - web:
+      url: https://github.com/argoproj-labs/rollout-extension/releases/download/v0.1.0/extension.tar
