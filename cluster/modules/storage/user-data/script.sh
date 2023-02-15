@@ -135,6 +135,7 @@ argocd app sync apps
 #   - external-secrets
 #   - secret-store
 #   - cert-manager, external-dns, contour
+#   - argocd, governor
 #   - everything else
 argocd app sync external-secrets
 for deployment in $(kubectl get deploy -n external-secrets -o name); do 
@@ -143,4 +144,6 @@ done
 
 argocd app sync secret-store
 argocd app sync cert-manager external-dns contour
-argocd app sync -l app.kubernetes.io/instance=apps
+argocd app sync argocd governor
+
+argocd app sync -l 'app.kubernetes.io/part-of!=infrastructure'
