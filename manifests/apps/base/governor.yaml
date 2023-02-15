@@ -11,6 +11,6 @@ spec:
     server: https://kubernetes.default.svc
   project: default
   source:
-    path: governor
+    path: manifests/governor
     repoURL: https://github.com/WaffleHacks/infrastructure.git
     targetRevision: HEAD
