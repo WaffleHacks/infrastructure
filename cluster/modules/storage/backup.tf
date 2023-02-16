@@ -22,7 +22,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "backup" {
     }
 
     expiration {
-      days = 14
+      days = 2
     }
 
     status = "Enabled"
@@ -36,7 +36,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "backup" {
     }
 
     expiration {
-      days = 30
+      days = 7
     }
 
     status = "Enabled"
