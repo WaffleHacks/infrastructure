@@ -70,7 +70,7 @@ EOF
 
 chmod +x /etc/wal-g.d/*.sh
 
-echo "0 0 * * 0 postgres /etc/wal-g.d/full.sh" >> /etc/cron.d/postgres-backup
+echo "0 0 * * * postgres /etc/wal-g.d/full.sh" >> /etc/cron.d/postgres-backup
 
 systemctl enable postgresql
 systemctl restart postgresql
@@ -126,8 +126,8 @@ argocd login --core
 argocd app create apps \
   --dest-namespace argocd \
   --dest-server https://kubernetes.default.svc \
-  --repo https://github.com/WaffleHacks/infrastructure.git \
-  --path manifests/apps
+  --repo https://github.com/WaffleHacks/infrastructure-manifests.git \
+  --path apps
 
 argocd app sync apps
 
