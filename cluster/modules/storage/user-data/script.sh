@@ -121,7 +121,7 @@ sudo -u postgres createdb --owner k3s k3s
 sudo -u postgres psql -d k3s -f /etc/pgbouncer/setup.sql
 
 # Install k3s
-curl -sfL https://get.k3s.io | K3S_TOKEN=${join_token} K3S_DATASTORE_ENDPOINT="postgres://k3s:$pg_k3s_password@127.0.0.1:6432/k3s?sslmode=disable&binary_parameters=yes" sh -s - server --node-ip $PRIVATE_IP --disable traefik --disable servicelb --disable-cloud-controller --kubelet-arg="provider-id=digitalocean://$INSTANCE_ID" --kubelet-arg="cloud-provider=external"
+curl -sfL https://get.k3s.io | K3S_TOKEN=${join_token} K3S_DATASTORE_ENDPOINT="postgres://k3s:$pg_k3s_password@127.0.0.1:5432/k3s?sslmode=disable&binary_parameters=yes" sh -s - server --node-ip $PRIVATE_IP --disable traefik --disable servicelb --disable-cloud-controller --kubelet-arg="provider-id=digitalocean://$INSTANCE_ID" --kubelet-arg="cloud-provider=external"
 sleep 15
 
 # Allow PgBouncer connections from K3S
