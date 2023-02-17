@@ -39,7 +39,7 @@ echo "deb [arch=$ARCH signed-by=/usr/share/keyrings/postgresql-archive-keyring.g
 
 # Install packages
 apt-get update
-apt-get install -y postgresql-15 vault
+apt-get install -y postgresql-15 pgbouncer vault
 
 # Install WAL-G
 curl -o wal-g -fsSL https://github.com/wal-g/wal-g/releases/download/v${versions.wal_g}/wal-g-pg-ubuntu-20.04-amd64
@@ -51,8 +51,8 @@ cat <<EOF > /etc/postgresql/15/main/conf.d/server.conf
 ${postgres_config}
 EOF
 cat <<EOF >> /etc/postgresql/15/main/pg_hba.conf
-# Internal network
-host    all             all             ${cidr}            scram-sha-256
+# PgBouncer connections
+local all all trust
 EOF
 
 # Configure WAL-G
@@ -75,19 +75,66 @@ echo "0 0 * * * postgres /etc/wal-g.d/full.sh" >> /etc/cron.d/postgres-backup
 systemctl enable postgresql
 systemctl restart postgresql
 
+# Configure PgBouncer
+systemctl stop pgbouncer
+
+cat <<EOF > /etc/pgbouncer/pgbouncer.ini
+${pgbouncer_config}
+EOF
+cat <<EOF > /etc/pgbouncer/pg_hba.conf
+# Local connections
+local sameuser all scram-sha-256
+# VPC connections
+host sameuser all ${cidr} scram-sha-256
+EOF
+
+cat <<EOF > /etc/pgbouncer/setup.sql
+${pgbouncer_setup}
+EOF
+
+sudo -u postgres createuser \
+    --no-superuser \
+    --no-createdb \
+    --no-createrole \
+    --no-replication \
+    pgbouncer
+sudo -u postgres psql -d postgres -f /etc/pgbouncer/setup.sql
+
+sed -i s/6432/5432/g /lib/systemd/system/pgbouncer.socket
+
+systemctl daemon-reload
+systemctl restart pgbouncer.socket
+
+systemctl enable pgbouncer.service
+systemctl restart pgbouncer.service
+
 # Add PostgreSQL user for k3s
 pg_k3s_password=$(openssl rand -hex 32)
 sudo -u postgres createuser \
     --no-superuser \
     --no-createdb \
     --no-createrole \
+    --no-replication \
     k3s
 sudo -u postgres psql -c "ALTER USER k3s WITH PASSWORD '$pg_k3s_password';"
 sudo -u postgres createdb --owner k3s k3s
+sudo -u postgres psql -d k3s -f /etc/pgbouncer/setup.sql
 
 # Install k3s
-curl -sfL https://get.k3s.io | K3S_TOKEN=${join_token} K3S_DATASTORE_ENDPOINT=postgres://k3s:$pg_k3s_password@127.0.0.1:5432/k3s?sslmode=disable sh -s - server --node-ip $PRIVATE_IP --disable traefik --disable servicelb --disable-cloud-controller --kubelet-arg="provider-id=digitalocean://$INSTANCE_ID" --kubelet-arg="cloud-provider=external"
+curl -sfL https://get.k3s.io | K3S_TOKEN=${join_token} K3S_DATASTORE_ENDPOINT="postgres://k3s:$pg_k3s_password@127.0.0.1:6432/k3s?sslmode=disable&binary_parameters=yes" sh -s - server --node-ip $PRIVATE_IP --disable traefik --disable servicelb --disable-cloud-controller --kubelet-arg="provider-id=digitalocean://$INSTANCE_ID" --kubelet-arg="cloud-provider=external"
 sleep 15
+
+# Allow PgBouncer connections from K3S
+k3s_cidr=$(cat /var/lib/rancher/k3s/agent/etc/flannel/net-conf.json | jq -r '.Network')
+cat <<EOF >> /etc/pgbouncer/pg_hba.conf
+# Local connections
+host all all 127.0.0.1/32 peer
+host all all ::1/128 peer
+# K3S connections
+host sameuser all $k3s_cidr scram-sha-256
+EOF
+
+systemctl restart pgbouncer
 
 # Add Vault credentials for External Secret Operator
 mkdir -p /var/lib/rancher/k3s/server/manifests/

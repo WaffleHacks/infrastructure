@@ -92,6 +92,9 @@ resource "digitalocean_droplet" "instance" {
     postgres_wal_backup_script  = file("${path.module}/user-data/wal-g/wal.sh")
     postgres_full_backup_script = file("${path.module}/user-data/wal-g/full.sh")
 
+    pgbouncer_config = file("${path.module}/user-data/pgbouncer/pgbouncer.ini")
+    pgbouncer_setup  = file("${path.module}/user-data/pgbouncer/setup.sql")
+
     manifest_digitalocean_ccm = templatefile("${path.module}/user-data/manifests/digitalocean-ccm.yaml", {
       digitalocean_access_token = data.vault_kv_secret_v2.digitalocean_ccm.data["access-token"]
 
