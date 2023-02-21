@@ -120,10 +120,6 @@ sleep 15
 # Allow PgBouncer connections from K3S
 k3s_cidr=$(cat /var/lib/rancher/k3s/agent/etc/flannel/net-conf.json | jq -r '.Network')
 cat <<EOF >> /etc/pgbouncer/pg_hba.conf
-# Local connections
-local sameuser all scram-sha-256
-host sameuser all 127.0.0.1/32 scram-sha-256
-host sameuser all ::1/128 scram-sha-256
 # K3S connections
 host sameuser all $k3s_cidr scram-sha-256
 EOF
