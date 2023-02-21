@@ -114,7 +114,7 @@ sudo -u postgres psql -d k3s -f /etc/pgbouncer/setup.sql
 
 # Install k3s
 curl -sfL https://get.k3s.io | K3S_TOKEN=${join_token} K3S_DATASTORE_ENDPOINT="postgres://k3s:$pg_k3s_password@127.0.0.1:6432/k3s?sslmode=disable&binary_parameters=yes" sh -s - server --node-ip $PRIVATE_IP --disable traefik --disable servicelb --disable-cloud-controller --kubelet-arg="provider-id=digitalocean://$INSTANCE_ID" --kubelet-arg="cloud-provider=external"
-sleep 15
+sleep 30
 
 # Allow PgBouncer connections from K3S
 k3s_cidr=$(cat /var/lib/rancher/k3s/agent/etc/flannel/net-conf.json | jq -r '.Network')
@@ -135,6 +135,8 @@ EOF
 cat <<EOF > /var/lib/rancher/k3s/server/manifests/digitalocean-ccm.yaml
 ${manifest_digitalocean_ccm}
 EOF
+
+sleep 30
 
 # Deploy Argo CD
 kubectl create namespace argocd
