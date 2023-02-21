@@ -84,8 +84,9 @@ EOF
 cat <<EOF > /etc/pgbouncer/pg_hba.conf
 # Local connections
 local sameuser all scram-sha-256
-# VPC connections
-host sameuser all ${cidr} scram-sha-256
+# Remote connections (ok, protected by firewall)
+host sameuser all 0.0.0.0/0 scram-sha-256
+host sameuser all ::/0 scram-sha-256
 EOF
 
 cat <<EOF > /etc/pgbouncer/setup.sql
@@ -99,11 +100,6 @@ sudo -u postgres createuser \
     --no-replication \
     pgbouncer
 sudo -u postgres psql -d postgres -f /etc/pgbouncer/setup.sql
-
-sed -i s/6432/5432/g /lib/systemd/system/pgbouncer.socket
-
-systemctl daemon-reload
-systemctl restart pgbouncer.socket
 
 systemctl enable pgbouncer.service
 systemctl restart pgbouncer.service
@@ -121,15 +117,16 @@ sudo -u postgres createdb --owner k3s k3s
 sudo -u postgres psql -d k3s -f /etc/pgbouncer/setup.sql
 
 # Install k3s
-curl -sfL https://get.k3s.io | K3S_TOKEN=${join_token} K3S_DATASTORE_ENDPOINT="postgres://k3s:$pg_k3s_password@127.0.0.1:5432/k3s?sslmode=disable&binary_parameters=yes" sh -s - server --node-ip $PRIVATE_IP --disable traefik --disable servicelb --disable-cloud-controller --kubelet-arg="provider-id=digitalocean://$INSTANCE_ID" --kubelet-arg="cloud-provider=external"
+curl -sfL https://get.k3s.io | K3S_TOKEN=${join_token} K3S_DATASTORE_ENDPOINT="postgres://k3s:$pg_k3s_password@127.0.0.1:6432/k3s?sslmode=disable&binary_parameters=yes" sh -s - server --node-ip $PRIVATE_IP --disable traefik --disable servicelb --disable-cloud-controller --kubelet-arg="provider-id=digitalocean://$INSTANCE_ID" --kubelet-arg="cloud-provider=external"
 sleep 15
 
 # Allow PgBouncer connections from K3S
 k3s_cidr=$(cat /var/lib/rancher/k3s/agent/etc/flannel/net-conf.json | jq -r '.Network')
 cat <<EOF >> /etc/pgbouncer/pg_hba.conf
 # Local connections
-host all all 127.0.0.1/32 peer
-host all all ::1/128 peer
+local sameuser all scram-sha-256
+host sameuser all 127.0.0.1/32 scram-sha-256
+host sameuser all ::1/128 scram-sha-256
 # K3S connections
 host sameuser all $k3s_cidr scram-sha-256
 EOF

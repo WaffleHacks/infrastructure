@@ -20,7 +20,7 @@ resource "digitalocean_firewall" "storage" {
   # Postgres
   inbound_rule {
     protocol    = "tcp"
-    port_range  = "5432"
+    port_range  = "6432"
     source_tags = ["cluster"]
   }
 
