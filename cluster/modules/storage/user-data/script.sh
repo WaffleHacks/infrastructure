@@ -50,10 +50,7 @@ mv wal-g /usr/local/bin/
 cat <<EOF > /etc/postgresql/15/main/conf.d/server.conf
 ${postgres_config}
 EOF
-cat <<EOF >> /etc/postgresql/15/main/pg_hba.conf
-# PgBouncer connections
-local all all trust
-EOF
+sed -i 's/local\s*all\s*all\s*peer/local all all trust/g' /etc/postgresql/15/main/pg_hba.conf
 
 # Configure WAL-G
 mkdir -p /etc/wal-g.d
