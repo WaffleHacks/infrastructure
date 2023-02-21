@@ -16,8 +16,7 @@ apt-get install -y \
     gnupg2 \
     jq \
     lsb-release \
-    software-properties-common \
-    wget
+    software-properties-common
 
 apt-get clean
 
