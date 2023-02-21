@@ -1,6 +1,0 @@
-- op: add
-  path: /rules/-
-  value:
-    apiGroups: ['projectcontour.io']
-    resources: ['httpproxies']
-    verbs: ['get', 'watch', 'list']
