@@ -152,9 +152,13 @@ echo "KUBECONFIG=/etc/rancher/k3s/k3s.yaml" >> /etc/environment
 export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
 
 # Wait for all Argo CD components to be ready
-for deployment in $(kubectl get deploy -n argocd -o name); do 
-  until kubectl rollout status $deployment -n argocd; do sleep 1; done
-done
+wait_for_rollouts() {
+  namespace=$1
+  for deployment in $(kubectl get deploy -n $namespace -o name); do
+    until kubectl rollout status $deployment -n $namespace; do sleep 1; done
+  done
+}
+wait_for_rollouts argocd
 
 # Setup Argo CD
 kubectl config set-context --current --namespace=argocd
@@ -175,13 +179,10 @@ argocd app sync apps
 #   - cert-manager, external-dns, contour
 #   - argocd, governor
 #   - everything else
-argocd app sync external-secrets
-for deployment in $(kubectl get deploy -n external-secrets -o name); do 
-  until kubectl rollout status $deployment -n external-secrets; do sleep 1; done
+for application in external-secrets secret-store cert-manager external-dns contour argocd governor; do
+  argocd app sync $application
+  namespace=$(kubectl get app $application -n argocd -o jsonpath='{.spec.destination.namespace}')
+  wait_for_rollouts $namespace
 done
-
-argocd app sync secret-store
-argocd app sync cert-manager external-dns contour
-argocd app sync argocd governor
 
 argocd app sync -l 'app.kubernetes.io/part-of!=infrastructure'
