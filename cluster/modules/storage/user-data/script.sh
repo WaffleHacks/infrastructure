@@ -173,18 +173,3 @@ argocd app create apps \
   --label app.kubernetes.io/part-of=infrastructure
 
 argocd app sync apps
-
-# Ensure components are applied in the correct order
-#   - external-secrets
-#   - secret-store
-#   - cert-manager, external-dns, contour
-#   - argocd, governor
-#   - everything else
-for application in external-secrets secret-store cert-manager external-dns contour argocd governor; do
-  kubectl config set-context --current --namespace=argocd
-  argocd app sync $application
-  namespace=$(kubectl get app $application -n argocd -o jsonpath='{.spec.destination.namespace}')
-  wait_for_rollouts $namespace
-done
-
-argocd app sync -l 'app.kubernetes.io/part-of!=infrastructure'
