@@ -181,6 +181,7 @@ argocd app sync apps
 #   - argocd, governor
 #   - everything else
 for application in external-secrets secret-store cert-manager external-dns contour argocd governor; do
+  kubectl config set-context --current --namespace=argocd
   argocd app sync $application
   namespace=$(kubectl get app $application -n argocd -o jsonpath='{.spec.destination.namespace}')
   wait_for_rollouts $namespace
