@@ -21,8 +21,6 @@ apt-get install -y \
 apt-get clean
 
 INSTANCE_ID=$(curl -s http://169.254.169.254/metadata/v1/id)
-PUBLIC_IPV4=$(curl -s http://169.254.169.254/metadata/v1/interfaces/public/0/ipv4/address)
-PUBLIC_IPV6=$(curl -s http://169.254.169.254/metadata/v1/interfaces/public/0/ipv6/address)
 PRIVATE_IP=$(curl -s http://169.254.169.254/metadata/v1/interfaces/private/0/ipv4/address)
 
 ARCH=$(dpkg --print-architecture)
@@ -41,7 +39,7 @@ apt-get update
 apt-get install -y postgresql-15 pgbouncer vault
 
 # Install WAL-G
-curl -o wal-g -fsSL https://github.com/wal-g/wal-g/releases/download/v${versions.wal_g}/wal-g-pg-ubuntu-20.04-amd64
+curl -o wal-g -fsSL "https://github.com/wal-g/wal-g/releases/download/v${versions.wal_g}/wal-g-pg-ubuntu-20.04-amd64"
 chmod +x wal-g
 mv wal-g /usr/local/bin/
 
@@ -89,14 +87,14 @@ systemctl enable pgbouncer.service
 systemctl restart pgbouncer.service
 
 # Install external-postgres operator
-curl -o external-postgres.deb -fsSL https://github.com/WaffleHacks/external-postgres/releases/download/v${versions.external_postgres}/external-postgres_${versions.external_postgres}_amd64.deb
+curl -o external-postgres.deb -fsSL "https://github.com/WaffleHacks/external-postgres/releases/download/v${versions.external_postgres}/external-postgres_${versions.external_postgres}_amd64.deb"
 dpkg -i external-postgres.deb
 rm external-postgres.deb
 
 # Configure external-postgres
 sed -i s/prefer/disable/g /etc/external-postgres/.env
 sed -i s#~/.kube/config#/etc/external-postgres/kubeconfig.yaml#g /etc/external-postgres/.env
-sed -i s/KUBE_DATABASE_HOST=postgres/KUBE_DATABASE_HOST=$PRIVATE_IP/g /etc/external-postgres/.env
+sed -i s/KUBE_DATABASE_HOST=postgres/KUBE_DATABASE_HOST="$PRIVATE_IP"/g /etc/external-postgres/.env
 sed -i s/KUBE_DATABASE_PORT=5432/KUBE_DATABASE_PORT=6432/g /etc/external-postgres/.env
 
 systemctl enable external-postgres
@@ -105,14 +103,14 @@ sleep 5
 
 # Add PostgreSQL user for k3s
 pg_k3s_password=$(openssl rand -hex 32)
-external-postgres database ensure k3s $pg_k3s_password
+external-postgres database ensure k3s "$pg_k3s_password"
 
 # Install k3s
-curl -sfL https://get.k3s.io | K3S_TOKEN=${join_token} K3S_DATASTORE_ENDPOINT="postgres://k3s:$pg_k3s_password@127.0.0.1:6432/k3s?sslmode=disable&binary_parameters=yes" sh -s - server --node-ip $PRIVATE_IP --disable traefik --disable servicelb --disable-cloud-controller --kubelet-arg="provider-id=digitalocean://$INSTANCE_ID" --kubelet-arg="cloud-provider=external"
+curl -sfL https://get.k3s.io | K3S_TOKEN=${join_token} K3S_DATASTORE_ENDPOINT="postgres://k3s:$pg_k3s_password@127.0.0.1:6432/k3s?sslmode=disable&binary_parameters=yes" sh -s - server --node-ip "$PRIVATE_IP" --disable traefik --disable servicelb --disable-cloud-controller --kubelet-arg="provider-id=digitalocean://$INSTANCE_ID" --kubelet-arg="cloud-provider=external"
 sleep 30
 
 # Allow PgBouncer connections from K3S
-k3s_cidr=$(cat /var/lib/rancher/k3s/agent/etc/flannel/net-conf.json | jq -r '.Network')
+k3s_cidr=$(jq -r '.Network' /var/lib/rancher/k3s/agent/etc/flannel/net-conf.json)
 cat <<EOF >> /etc/pgbouncer/pg_hba.conf
 # K3S connections
 host sameuser all $k3s_cidr scram-sha-256
@@ -154,8 +152,8 @@ export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
 # Wait for all Argo CD components to be ready
 wait_for_rollouts() {
   namespace=$1
-  for deployment in $(kubectl get deploy -n $namespace -o name); do
-    until kubectl rollout status $deployment -n $namespace; do sleep 1; done
+  for deployment in $(kubectl get deploy -n "$namespace" -o name); do
+    until kubectl rollout status "$deployment" -n "$namespace"; do sleep 1; done
   done
 }
 wait_for_rollouts argocd
