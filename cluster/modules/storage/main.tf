@@ -20,10 +20,8 @@ terraform {
 }
 
 locals {
-  versions = {
-    wal_g             = "2.0.1"
-    external_postgres = "0.1.3"
-  }
+  wal_g_version             = "2.0.1"
+  external_postgres_version = "0.1.3"
 }
 
 resource "random_string" "suffix" {
@@ -72,7 +70,8 @@ resource "digitalocean_droplet" "instance" {
   tags     = ["storage", "cluster"]
 
   user_data = templatefile("${path.module}/user-data/script.sh", {
-    versions = local.versions
+    wal_g_version             = local.wal_g_version
+    external_postgres_version = local.external_postgres_version
 
     cidr = var.vpc.cidr
 
@@ -80,18 +79,15 @@ resource "digitalocean_droplet" "instance" {
 
     postgres_config = file("${path.module}/user-data/postgresql.conf")
     postgres_wal_config = templatefile("${path.module}/user-data/wal-g/env", {
-      vault = {
-        address = var.vault_address
-
-        role_id   = vault_approle_auth_backend_role.backup.role_id
-        secret_id = vault_approle_auth_backend_role_secret_id.backup.secret_id
-      }
+      vault_address   = var.vault_address
+      vault_role_id   = vault_approle_auth_backend_role.backup.role_id
+      vault_secret_id = vault_approle_auth_backend_role_secret_id.backup.secret_id
 
       aws_region = var.region.aws
       s3_bucket  = aws_s3_bucket.backup.bucket
     })
-    postgres_wal_backup_script  = file("${path.module}/user-data/wal-g/wal.sh")
-    postgres_full_backup_script = file("${path.module}/user-data/wal-g/full.sh")
+    postgres_wal_backup_script  = replace(file("${path.module}/user-data/wal-g/wal.sh"), "$", "\\$")
+    postgres_full_backup_script = replace(file("${path.module}/user-data/wal-g/full.sh"), "$", "\\$")
 
     pgbouncer_config = file("${path.module}/user-data/pgbouncer.ini")
 

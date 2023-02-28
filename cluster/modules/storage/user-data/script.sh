@@ -39,7 +39,7 @@ apt-get update
 apt-get install -y postgresql-15 pgbouncer vault
 
 # Install WAL-G
-curl -o wal-g -fsSL "https://github.com/wal-g/wal-g/releases/download/v${versions.wal_g}/wal-g-pg-ubuntu-20.04-amd64"
+curl -o wal-g -fsSL "https://github.com/wal-g/wal-g/releases/download/v${wal_g_version}/wal-g-pg-ubuntu-20.04-amd64"
 chmod +x wal-g
 mv wal-g /usr/local/bin/
 
@@ -87,7 +87,7 @@ systemctl enable pgbouncer.service
 systemctl restart pgbouncer.service
 
 # Install external-postgres operator
-curl -o external-postgres.deb -fsSL "https://github.com/WaffleHacks/external-postgres/releases/download/v${versions.external_postgres}/external-postgres_${versions.external_postgres}_amd64.deb"
+curl -o external-postgres.deb -fsSL "https://github.com/WaffleHacks/external-postgres/releases/download/v${external_postgres_version}/external-postgres_${external_postgres_version}_amd64.deb"
 dpkg -i external-postgres.deb
 rm external-postgres.deb
 

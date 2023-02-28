@@ -27,8 +27,16 @@ alias f := fmt
 alias v := validate
 alias l := lint
 
+# Run shellcheck on the user-data scripts
+shellcheck: (template "storage") (template "agent")
+  @find scripts/templated/ -type f -exec shellcheck -S style -x {} \;
+
+# Template the user-data for a module
+template module:
+  python3 scripts/template.py {{module}}
+
 # Run tests in CI
-ci: check-fmt validate lint
+ci: check-fmt validate lint shellcheck
 
 # Check that the formatting is correct
 check-fmt:

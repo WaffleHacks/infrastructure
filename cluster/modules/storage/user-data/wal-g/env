@@ -1,13 +1,15 @@
+#!/usr/bin/env bash
+
 export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
-export VAULT_ADDR="${vault.address}"
+export VAULT_ADDR="${vault_address}"
 export VAULT_FORMAT=json
 
-ROLE_ID="${vault.role_id}"
-SECRET_ID="${vault.secret_id}"
+export ROLE_ID="${vault_role_id}"
+export SECRET_ID="${vault_secret_id}"
 
 export AWS_REGION="${aws_region}"
-S3_BUCKET="${s3_bucket}"
+export S3_BUCKET="${s3_bucket}"
 
 export PGHOST=/var/run/postgresql
 export PGUSER=postgres

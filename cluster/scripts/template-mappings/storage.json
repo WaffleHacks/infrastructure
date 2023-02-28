@@ -1,0 +1,28 @@
+{
+  "script.sh": {
+    "wal_g_version": "2.0.1",
+    "postgres_config": { "ref": "postgresql.conf" },
+    "postgres_wal_config": { "ref": "wal-g/env" },
+    "postgres_wal_backup_script": { "ref": "wal-g/wal.sh" },
+    "postgres_full_backup_script": { "ref": "wal-g/full.sh" },
+    "pgbouncer_config": { "ref": "pgbouncer.ini" },
+    "external_postgres_version": "0.1.3",
+    "join_token": "testing-token",
+    "manifest_vault_credentials": { "ref": "manifests/vault-credentials.yaml" },
+    "manifest_digitalocean_ccm": { "ref": "manifests/digitalocean-ccm.yaml" }
+  },
+  "wal-g/env": {
+    "vault_address": "https://vault.example.com",
+    "vault_role_id": "abcdef01-2345-6789-0abc-def012345678",
+    "vault_secret_id": "abcdef01-2345-6789-0abc-def012345678",
+    "aws_region": "us-east-1",
+    "s3_bucket": "example-bucket"
+  },
+  "manifests/digitalocean-ccm.yaml": {
+    "digitalocean_access_token": "dop_v1_testing",
+    "vpc_id": "vpc-12345678"
+  },
+  "manifests/vault-credentials.yaml": {
+    "secret_id": "abcdef01-2345-6789-0abc-def012345678"
+  }
+}
