@@ -85,32 +85,27 @@ host sameuser all 0.0.0.0/0 scram-sha-256
 host sameuser all ::/0 scram-sha-256
 EOF
 
-cat <<EOF > /etc/pgbouncer/setup.sql
-${pgbouncer_setup}
-EOF
-
-sudo -u postgres createuser \
-    --no-superuser \
-    --no-createdb \
-    --no-createrole \
-    --no-replication \
-    pgbouncer
-sudo -u postgres psql -d postgres -f /etc/pgbouncer/setup.sql
-
 systemctl enable pgbouncer.service
 systemctl restart pgbouncer.service
 
+# Install external-postgres operator
+curl -o external-postgres.deb -fsSL https://github.com/WaffleHacks/external-postgres/releases/download/v${versions.external_postgres}/external-postgres_${versions.external_postgres}_amd64.deb
+dpkg -i external-postgres.deb
+rm external-postgres.deb
+
+# Configure external-postgres
+sed -i s/prefer/disable/g /etc/external-postgres/.env
+sed -i s#~/.kube/config#/etc/external-postgres/kubeconfig.yaml#g /etc/external-postgres/.env
+sed -i s/KUBE_DATABASE_HOST=postgres/KUBE_DATABASE_HOST=$PRIVATE_IP/g /etc/external-postgres/.env
+sed -i s/KUBE_DATABASE_PORT=5432/KUBE_DATABASE_PORT=6432/g /etc/external-postgres/.env
+
+systemctl enable external-postgres
+systemctl restart external-postgres
+sleep 5
+
 # Add PostgreSQL user for k3s
 pg_k3s_password=$(openssl rand -hex 32)
-sudo -u postgres createuser \
-    --no-superuser \
-    --no-createdb \
-    --no-createrole \
-    --no-replication \
-    k3s
-sudo -u postgres psql -c "ALTER USER k3s WITH PASSWORD '$pg_k3s_password';"
-sudo -u postgres createdb --owner k3s k3s
-sudo -u postgres psql -d k3s -f /etc/pgbouncer/setup.sql
+external-postgres database ensure k3s $pg_k3s_password
 
 # Install k3s
 curl -sfL https://get.k3s.io | K3S_TOKEN=${join_token} K3S_DATASTORE_ENDPOINT="postgres://k3s:$pg_k3s_password@127.0.0.1:6432/k3s?sslmode=disable&binary_parameters=yes" sh -s - server --node-ip $PRIVATE_IP --disable traefik --disable servicelb --disable-cloud-controller --kubelet-arg="provider-id=digitalocean://$INSTANCE_ID" --kubelet-arg="cloud-provider=external"
@@ -137,6 +132,11 @@ ${manifest_digitalocean_ccm}
 EOF
 
 sleep 30
+
+# Enable external-postgres operator
+cp /etc/rancher/k3s/k3s.yaml /etc/external-postgres/kubeconfig.yaml
+chown postgres:postgres /etc/external-postgres/kubeconfig.yaml
+external-postgres operator enable
 
 # Deploy Argo CD
 kubectl create namespace argocd
