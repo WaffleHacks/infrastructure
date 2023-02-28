@@ -11,7 +11,7 @@ jobs:
       - uses: terraform-linters/setup-tflint@v2
       - uses: hashicorp/setup-terraform@v2
       - uses: hashicorp/setup-packer@main
-      - run: apt install -y shellcheck
+      - run: sudo apt-get install -y shellcheck
 
       - run: just init
         env:
