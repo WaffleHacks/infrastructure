@@ -81,6 +81,8 @@ local sameuser all scram-sha-256
 # Remote connections (ok, protected by firewall)
 host sameuser all 0.0.0.0/0 scram-sha-256
 host sameuser all ::/0 scram-sha-256
+# Tailscale connections
+host sameuser all 100.64.0.0/10 scram-sha-256
 EOF
 
 systemctl enable pgbouncer.service
