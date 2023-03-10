@@ -6,6 +6,10 @@ vault_address        = "https://vault.your.domain"
 vault_auth_path      = "auth/<method>/login"
 vault_auth_parmeters = {}
 
+# The Tailscale configuration
+tailscale_api_key = "your-tailscale-api-key-here"
+tailscale_tailnet = "tailnet-NNNN.ts.net"
+
 # The regions to deploy resources in
 region = {
   aws          = "us-west-1"

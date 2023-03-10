@@ -16,6 +16,16 @@ variable "ssh_key" {
   description = "The name of the SSH key to use for the nodes, must already exist in DigitalOcean"
 }
 
+variable "tailscale_api_key" {
+  type        = string
+  description = "The API key to use for authenticating requests to the API"
+}
+
+variable "tailscale_tailnet" {
+  type        = string
+  description = "The Tailnet to perform actions in"
+}
+
 variable "vault_address" {
   type        = string
   description = "The address of the Vault server to use for secrets"

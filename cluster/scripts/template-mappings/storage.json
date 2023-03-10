@@ -9,7 +9,8 @@
     "external_postgres_version": "0.1.3",
     "join_token": "testing-token",
     "manifest_vault_credentials": { "ref": "manifests/vault-credentials.yaml" },
-    "manifest_digitalocean_ccm": { "ref": "manifests/digitalocean-ccm.yaml" }
+    "manifest_digitalocean_ccm": { "ref": "manifests/digitalocean-ccm.yaml" },
+    "tailscale_auth_key": "testing-auth-key"
   },
   "wal-g/env": {
     "vault_address": "https://vault.example.com",

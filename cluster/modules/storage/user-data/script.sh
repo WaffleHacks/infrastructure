@@ -136,35 +136,10 @@ cp /etc/rancher/k3s/k3s.yaml /etc/external-postgres/kubeconfig.yaml
 chown postgres:postgres /etc/external-postgres/kubeconfig.yaml
 external-postgres operator enable
 
-# Deploy Argo CD
-kubectl create namespace argocd
-kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+# Install Tailscale
+curl -fsSL https://tailscale.com/install.sh | sh
+tailscale up --authkey "${tailscale_auth_key}"
 
-# Install Argo CD CLI
-curl -sSL -o argocd-linux-amd64 https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
-install -m 555 argocd-linux-amd64 /usr/local/bin/argocd
-rm argocd-linux-amd64
-
-# Add kubeconfig to environment for Argo CD CLI
+# Add kubeconfig to environment
 echo "KUBECONFIG=/etc/rancher/k3s/k3s.yaml" >> /etc/environment
 export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
-
-# Wait for all Argo CD components to be ready
-namespace=argocd
-for deployment in $(kubectl get deploy -n "$namespace" -o name); do
-    until kubectl rollout status "$deployment" -n "$namespace"; do sleep 1; done
-  done
-
-# Setup Argo CD
-kubectl config set-context --current --namespace=argocd
-argocd login --core
-
-# Load all apps
-argocd app create apps \
-  --dest-namespace argocd \
-  --dest-server https://kubernetes.default.svc \
-  --repo https://github.com/WaffleHacks/infrastructure-manifests.git \
-  --path apps \
-  --label app.kubernetes.io/part-of=infrastructure
-
-argocd app sync apps

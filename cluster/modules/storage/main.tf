@@ -12,6 +12,10 @@ terraform {
       source  = "hashicorp/random"
       version = "~> 3.4.3"
     }
+    tailscale = {
+      source  = "tailscale/tailscale"
+      version = "~> 0.13.6"
+    }
     vault = {
       source  = "hashicorp/vault"
       version = "~> 3.12.0"
@@ -52,6 +56,13 @@ resource "vault_approle_auth_backend_role_secret_id" "external_secrets" {
   role_name = "cluster-external-secrets"
 }
 
+resource "tailscale_tailnet_key" "instance" {
+  expiry        = 300
+  reusable      = false
+  ephemeral     = false
+  preauthorized = true
+}
+
 resource "digitalocean_droplet" "instance" {
   name = "storage-${random_string.suffix.result}"
 
@@ -76,6 +87,8 @@ resource "digitalocean_droplet" "instance" {
     cidr = var.vpc.cidr
 
     join_token = random_password.join_token.result
+
+    tailscale_auth_key = tailscale_tailnet_key.instance.key
 
     postgres_config = file("${path.module}/user-data/postgresql.conf")
     postgres_wal_config = templatefile("${path.module}/user-data/wal-g/env", {

@@ -9,6 +9,10 @@ terraform {
       source  = "digitalocean/digitalocean"
       version = "~> 2.26.0"
     }
+    tailscale = {
+      source  = "tailscale/tailscale"
+      version = "~> 0.13.6"
+    }
     vault = {
       source  = "hashicorp/vault"
       version = "~> 3.12.0"
@@ -35,6 +39,11 @@ provider "aws" {
 
 provider "digitalocean" {
   token = var.digitalocean_token
+}
+
+provider "tailscale" {
+  api_key = var.tailscale_api_key
+  tailnet = var.tailscale_tailnet
 }
 
 provider "vault" {
