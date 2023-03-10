@@ -150,13 +150,10 @@ echo "KUBECONFIG=/etc/rancher/k3s/k3s.yaml" >> /etc/environment
 export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
 
 # Wait for all Argo CD components to be ready
-wait_for_rollouts() {
-  namespace=$1
-  for deployment in $(kubectl get deploy -n "$namespace" -o name); do
+namespace=argocd
+for deployment in $(kubectl get deploy -n "$namespace" -o name); do
     until kubectl rollout status "$deployment" -n "$namespace"; do sleep 1; done
   done
-}
-wait_for_rollouts argocd
 
 # Setup Argo CD
 kubectl config set-context --current --namespace=argocd
