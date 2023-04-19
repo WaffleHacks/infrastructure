@@ -18,3 +18,17 @@ resource "aws_iam_role_policy" "packer" {
 
   policy = data.aws_iam_policy_document.packer.json
 }
+
+resource "aws_iam_role" "application_portal_ecr" {
+  name = "ApplicationPortalECR"
+  path = local.infra_role_path
+
+  assume_role_policy = data.aws_iam_policy_document.application_portal_ecr_trust_relationship.json
+}
+
+resource "aws_iam_role_policy" "application_portal_ecr" {
+  name = "ApplicationPortalECR"
+  role = aws_iam_role.application_portal_ecr.id
+
+  policy = data.aws_iam_policy_document.application_portal_ecr.json
+}
