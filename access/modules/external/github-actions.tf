@@ -32,3 +32,17 @@ resource "aws_iam_role_policy" "application_portal_ecr" {
 
   policy = data.aws_iam_policy_document.application_portal_ecr.json
 }
+
+resource "aws_iam_role" "mailer_ecr" {
+  name = "MailerECR"
+  path = local.infra_role_path
+
+  assume_role_policy = data.aws_iam_policy_document.mailer_ecr_trust_relationship.json
+}
+
+resource "aws_iam_role_policy" "mailer_ecr" {
+  name = "MailerECR"
+  role = aws_iam_role.mailer_ecr.id
+
+  policy = data.aws_iam_policy_document.mailer_ecr.json
+}
