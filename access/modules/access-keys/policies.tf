@@ -112,6 +112,7 @@ data "aws_iam_policy_document" "iam_role" {
       "iam:GetRole",
       "iam:GetRolePolicy",
       "iam:ListAttachedRolePolicies",
+      "iam:ListInstanceProfilesForRole",
       "iam:ListRolePolicies",
       "iam:PassRole",
       "iam:PutRolePermissionsBoundary",
