@@ -5,20 +5,6 @@ module "github_actions_provider" {
   audience = "sts.amazonaws.com"
 }
 
-resource "aws_iam_role" "packer" {
-  name = "HashiCorpPacker"
-  path = local.infra_role_path
-
-  assume_role_policy = data.aws_iam_policy_document.packer_trust_relationship.json
-}
-
-resource "aws_iam_role_policy" "packer" {
-  name = "HashiCorpPacker"
-  role = aws_iam_role.packer.id
-
-  policy = data.aws_iam_policy_document.packer.json
-}
-
 resource "aws_iam_role" "application_portal_ecr" {
   name = "ApplicationPortalECR"
   path = local.infra_role_path
