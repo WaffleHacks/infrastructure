@@ -25,12 +25,26 @@ provider "aws" {
   }
 }
 
+provider "aws" {
+  alias  = "us_east_1"
+  region = "us-east-1"
+
+  default_tags {
+    tags = {
+      ManagedBy = "terraform"
+    }
+  }
+}
+
 # Handle configuring the organization accounts
 module "organization" {
   source = "./modules/organization"
 }
 
-# Handle roles for external access from 3rd-party services like GitHub Actions
-module "external" {
-  source = "./modules/external"
+# Creates an federated identity provider for GitHub Actions using OpenID Connect
+module "github_actions" {
+  source = "./modules/openid-connect-provider"
+
+  url      = "https://token.actions.githubusercontent.com"
+  audience = "sts.amazonaws.com"
 }
