@@ -34,8 +34,3 @@ module "organization" {
 module "external" {
   source = "./modules/external"
 }
-
-# Handle provisioning access keys for various services
-module "access_keys" {
-  source = "./modules/access-keys"
-}
