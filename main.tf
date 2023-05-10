@@ -1,16 +1,16 @@
 terraform {
-  required_version = ">= 1.3.0"
+  required_version = ">= 1.4.6"
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 4.49.0"
+      version = "~> 4.66.1"
     }
   }
 
   cloud {
     organization = "wafflehacks"
     workspaces {
-      name = "access"
+      name = "wafflehacks"
     }
   }
 }
@@ -20,7 +20,7 @@ provider "aws" {
 
   default_tags {
     tags = {
-      Project = "access"
+      ManagedBy = "terraform"
     }
   }
 }

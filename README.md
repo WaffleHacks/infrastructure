@@ -5,11 +5,11 @@ Automated configuration and setup for the servers and associated services poweri
 All configuration is managed by HashiCorp [Terraform](https://terraform.io) and [Packer](https://packer.io).
 
 
-### Order of Operations
+### Permissions
 
-To start from scratch, projects must be initialized in the following order:
-- access
-- vault/image
-- vault/deployment
-- vault/configuration
-- cluster
+The expected AWS IAM policies are as follows:
+
+- `arn:aws:iam::aws:policy/AWSOrganizationsFullAccess`
+- `arn:aws:iam::aws:policy/AWSSSODirectoryAdministrator`
+- `arn:aws:iam::aws:policy/AWSSSOMasterAccountAdministrator`
+- `arn:aws:iam::aws:policy/IAMFullAccess`

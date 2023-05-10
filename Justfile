@@ -1,36 +1,38 @@
+#!/usr/bin/env just --justfile
+
 # List all the tasks
 list:
   @just --list --unsorted
 
-# Initialize all projects
+# Initialize terraform providers
 init:
-  @just all init
+  terraform init
+  tflint --init
 
-# Format all configurations
+# Apply formatting
 fmt:
-  @just all fmt
+  terraform fmt -recursive .
 
-# Validate all configurations
+# Check if the configuration is valid
 validate:
-  @just all validate
+  terraform validate
+
+# Run linters
+lint:
+  tflint --recursive
 
 alias f := fmt
 alias v := validate
+alias l := lint
 
-# Run all tests in CI
-ci:
-  @just all ci
+# Plan the changes
+plan *FLAGS: validate
+  terraform plan {{FLAGS}}
 
-# Run a task on all projects
-all *FLAGS:
-  #!/usr/bin/env bash
-  set -e
+# Launch an interactive console
+console:
+  terraform console
 
-  for project in access; do
-    echo "Entering ${project}..."
-    just -f ${project}/Justfile {{FLAGS}};
-  done
-
-# Run a task in the specificed subproject
-sub project *FLAGS:
-  @just -f {{project}}/Justfile {{FLAGS}}
+# Run checks in CI
+ci: validate lint
+  terraform fmt -recursive -diff -check
