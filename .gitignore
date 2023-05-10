@@ -148,3 +148,6 @@ terraform.rc
 
 # Ignore code-workspaces
 *.code-workspace
+
+### Project Files ###
+.env
