@@ -27,7 +27,7 @@ resource "aws_ecrpublic_repository" "repository" {
 
 resource "aws_iam_role" "publish" {
   name = "${local.role_name}Publish"
-  path = "/ecr"
+  path = "/ecr/"
 
   assume_role_policy = data.aws_iam_policy_document.publish_trust_relationship.json
 }
