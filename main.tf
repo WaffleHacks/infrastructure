@@ -65,3 +65,12 @@ module "application_portal" {
 
   github_actions_provider = module.github_actions.arn
 }
+
+module "mailer" {
+  source = "./modules/mailer"
+  providers = {
+    aws.us_east_1 = aws.us_east_1
+  }
+
+  github_actions_provider = module.github_actions.arn
+}
