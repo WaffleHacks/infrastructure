@@ -5,6 +5,10 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 4.66.1"
     }
+    doppler = {
+      source  = "DopplerHQ/doppler"
+      version = "~> 1.2.2"
+    }
   }
 
   cloud {
@@ -36,6 +40,10 @@ provider "aws" {
   }
 }
 
+provider "doppler" {
+  doppler_token = var.doppler_token
+}
+
 # Handle configuring the organization accounts
 module "organization" {
   source = "./modules/organization"
@@ -47,4 +55,13 @@ module "github_actions" {
 
   url      = "https://token.actions.githubusercontent.com"
   audience = "sts.amazonaws.com"
+}
+
+module "application_portal" {
+  source = "./modules/application-portal"
+  providers = {
+    aws.us_east_1 = aws.us_east_1
+  }
+
+  github_actions_provider = module.github_actions.arn
 }
