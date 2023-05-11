@@ -13,3 +13,6 @@ The expected AWS IAM policies are as follows:
 - `arn:aws:iam::aws:policy/AWSSSODirectoryAdministrator`
 - `arn:aws:iam::aws:policy/AWSSSOMasterAccountAdministrator`
 - `arn:aws:iam::aws:policy/IAMFullAccess`
+- `arn:aws:iam::aws:policy/AmazonElasticContainerRegistryFullAccess`
+- `arn:aws:iam::aws:policy/AmazonS3FullAccess`
+- `arn:aws:iam::aws:policy/AmazonSESFullAccess`
