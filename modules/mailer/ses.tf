@@ -6,8 +6,8 @@ resource "aws_ses_domain_identity" "domain" {
 
 data "aws_iam_policy_document" "ses" {
   statement {
-    effect  = "Allow"
-    actions = ["ses:SendEmail", "ses:SendRawEmail"]
+    effect    = "Allow"
+    actions   = ["ses:SendEmail", "ses:SendRawEmail"]
     resources = ["*"]
 
     condition {
