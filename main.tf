@@ -9,6 +9,10 @@ terraform {
       source  = "DopplerHQ/doppler"
       version = "~> 1.2.2"
     }
+    google = {
+      source  = "hashicorp/google"
+      version = "~> 4.64.0"
+    }
   }
 
   cloud {
@@ -20,7 +24,7 @@ terraform {
 }
 
 provider "aws" {
-  region = var.region
+  region = var.aws.region
 
   default_tags {
     tags = {
@@ -44,17 +48,20 @@ provider "doppler" {
   doppler_token = var.doppler_token
 }
 
+provider "google" {
+  project = var.google.project
+  region  = var.google.region
+}
+
 # Handle configuring the organization accounts
 module "organization" {
   source = "./modules/organization"
 }
 
 # Creates an federated identity provider for GitHub Actions using OpenID Connect
+# Handles both Google and AWS
 module "github_actions" {
-  source = "./modules/openid-connect-provider"
-
-  url      = "https://token.actions.githubusercontent.com"
-  audience = "sts.amazonaws.com"
+  source = "./modules/github-actions"
 }
 
 module "application_portal" {
@@ -63,7 +70,7 @@ module "application_portal" {
     aws.us_east_1 = aws.us_east_1
   }
 
-  github_actions_provider = module.github_actions.arn
+  github_actions_provider = module.github_actions.aws
 }
 
 module "mailer" {
@@ -72,5 +79,5 @@ module "mailer" {
     aws.us_east_1 = aws.us_east_1
   }
 
-  github_actions_provider = module.github_actions.arn
+  github_actions_provider = module.github_actions.aws
 }

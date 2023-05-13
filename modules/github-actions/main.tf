@@ -1,9 +1,13 @@
 terraform {
-  required_version = ">= 1.4.2"
+  required_version = ">= 1.4.6"
   required_providers {
     aws = {
       source  = "hashicorp/aws"
       version = "~> 4.66.1"
+    }
+    google = {
+      source  = "hashicorp/google"
+      version = "~> 4.64.0"
     }
     http = {
       source  = "hashicorp/http"
@@ -16,8 +20,6 @@ terraform {
   }
 }
 
-resource "aws_iam_openid_connect_provider" "provider" {
-  client_id_list  = [var.audience]
-  thumbprint_list = [for certificate in data.tls_certificate.provider.certificates : certificate.sha1_fingerprint]
-  url             = var.url
+locals {
+  url = "https://token.actions.githubusercontent.com"
 }
