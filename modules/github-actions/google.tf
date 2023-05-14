@@ -5,9 +5,9 @@ resource "google_iam_workload_identity_pool" "github" {
   description  = "Allows workloads from GitHub to access Google Cloud APIs"
 }
 
-resource "google_iam_workload_identity_pool_provider" "actions" {
+resource "google_iam_workload_identity_pool_provider" "github_actions" {
   workload_identity_pool_id          = google_iam_workload_identity_pool.github.workload_identity_pool_id
-  workload_identity_pool_provider_id = "actions"
+  workload_identity_pool_provider_id = "github-actions"
 
   display_name = "GitHub Actions"
   description  = "Allows workloads from GitHub Actions"
@@ -25,4 +25,5 @@ resource "google_iam_workload_identity_pool_provider" "actions" {
     "attribute.repository" = "assertion.repository"
     "attribute.event"      = "assertion.event_name"
   }
+  attribute_condition = "assertion.repository_owner == \"WaffleHacks\""
 }
