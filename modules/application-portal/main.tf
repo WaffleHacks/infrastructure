@@ -11,5 +11,9 @@ terraform {
       source  = "DopplerHQ/doppler"
       version = "~> 1.2.2"
     }
+    google = {
+      source  = "hashicorp/google"
+      version = "~> 4.64.0"
+    }
   }
 }
