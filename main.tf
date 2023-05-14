@@ -70,7 +70,8 @@ module "application_portal" {
     aws.us_east_1 = aws.us_east_1
   }
 
-  github_actions_provider = module.github_actions.aws
+  github_actions_provider        = module.github_actions.aws
+  github_actions_provider_google = module.github_actions.google
 }
 
 module "mailer" {
