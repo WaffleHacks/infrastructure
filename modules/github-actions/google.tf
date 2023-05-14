@@ -5,9 +5,9 @@ resource "google_iam_workload_identity_pool" "github" {
   description  = "Allows workloads from GitHub to access Google Cloud APIs"
 }
 
-resource "google_iam_workload_identity_pool_provider" "github_actions" {
+resource "google_iam_workload_identity_pool_provider" "actions" {
   workload_identity_pool_id          = google_iam_workload_identity_pool.github.workload_identity_pool_id
-  workload_identity_pool_provider_id = "github-actions"
+  workload_identity_pool_provider_id = "actions"
 
   display_name = "GitHub Actions"
   description  = "Allows workloads from GitHub Actions"
