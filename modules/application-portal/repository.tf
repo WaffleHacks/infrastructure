@@ -35,13 +35,18 @@ resource "google_service_account" "github_publish" {
   description  = "Allows publishing built images to Artifact Registry"
 }
 
-resource "google_service_account_iam_binding" "github_publish" {
-  service_account_id = google_service_account.github_publish.name
-  role               = "roles/iam.workloadIdentityUser"
+data "google_iam_policy" "workload_identity" {
+  binding {
+    role = "roles/iam.workloadIdentityUser"
 
-  members = [
-    "principalSet://iam.googleapis.com${var.github_actions_provider_google}/attribute.repository/WaffleHacks/application-portal",
-  ]
+    members = ["principalSet://iam.googleapis.com/${var.github_actions_provider_google}/attribute.repository/WaffleHacks/application-portal"]
+  }
+}
+
+resource "google_service_account_iam_policy" "workload_identity" {
+  service_account_id = google_service_account.github_publish.name
+
+  policy_data = data.google_iam_policy.workload_identity.policy_data
 }
 
 data "google_iam_policy" "repository" {
