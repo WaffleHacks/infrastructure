@@ -4,6 +4,9 @@ output "aws" {
 }
 
 output "google" {
-  value       = google_iam_workload_identity_pool_provider.github_actions.id
-  description = "The Google ID of the Workload Identity Pool"
+  value = {
+    id       = google_iam_workload_identity_pool.github.name
+    provider = google_iam_workload_identity_pool_provider.github_actions.name
+  }
+  description = "The Google ID of the Workload Identity pool and Workload Identity pool provider"
 }

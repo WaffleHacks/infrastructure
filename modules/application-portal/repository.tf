@@ -39,7 +39,7 @@ data "google_iam_policy" "workload_identity" {
   binding {
     role = "roles/iam.workloadIdentityUser"
 
-    members = ["principalSet://iam.googleapis.com/${var.github_actions_provider_google}/attribute.repository/WaffleHacks/application-portal"]
+    members = ["principalSet://iam.googleapis.com/${var.github_actions_provider_google.id}/attribute.repository/WaffleHacks/application-portal"]
   }
 }
 
@@ -72,7 +72,7 @@ resource "google_artifact_registry_repository_iam_policy" "portal" {
 resource "doppler_secret" "repository" {
   for_each = {
     "GOOGLE_SERVICE_ACCOUNT"            = google_service_account.github_publish.email
-    "GOOGLE_WORKLOAD_IDENTITY_PROVIDER" = var.github_actions_provider_google
+    "GOOGLE_WORKLOAD_IDENTITY_PROVIDER" = var.github_actions_provider_google.provider
   }
 
   project = "application-portal"
