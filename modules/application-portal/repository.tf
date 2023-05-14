@@ -1,25 +1,3 @@
-module "image_repository" {
-  source = "../image-repository"
-  providers = {
-    aws = aws.us_east_1
-  }
-
-  name            = "application-portal"
-  subrepositories = ["api", "mjml", "tasks"]
-  description     = "A component of the WaffleHacks application portal."
-
-  github_repository       = "WaffleHacks/application-portal"
-  github_actions_provider = var.github_actions_provider
-}
-
-resource "doppler_secret" "github_publish_role" {
-  project = "application-portal"
-  config  = "gha"
-
-  name  = "AWS_ROLE"
-  value = module.image_repository.role_arn
-}
-
 resource "google_artifact_registry_repository" "portal" {
   repository_id = "application-portal"
   description   = "Components of the WaffleHacks application portal"
@@ -39,7 +17,7 @@ data "google_iam_policy" "workload_identity" {
   binding {
     role = "roles/iam.workloadIdentityUser"
 
-    members = ["principalSet://iam.googleapis.com/${var.github_actions_provider_google.id}/attribute.repository/WaffleHacks/application-portal"]
+    members = ["principalSet://iam.googleapis.com/${var.github_actions_provider.id}/attribute.repository/WaffleHacks/application-portal"]
   }
 }
 
@@ -72,7 +50,7 @@ resource "google_artifact_registry_repository_iam_policy" "portal" {
 resource "doppler_secret" "repository" {
   for_each = {
     "GOOGLE_SERVICE_ACCOUNT"            = google_service_account.github_publish.email
-    "GOOGLE_WORKLOAD_IDENTITY_PROVIDER" = var.github_actions_provider_google.provider
+    "GOOGLE_WORKLOAD_IDENTITY_PROVIDER" = var.github_actions_provider.provider
   }
 
   project = "application-portal"
