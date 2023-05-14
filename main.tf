@@ -73,11 +73,31 @@ module "application_portal" {
   github_actions_provider = module.github_actions.google
 }
 
+resource "google_artifact_registry_repository" "internal" {
+  repository_id = "internal"
+  description   = "Internal APIs and services for other WaffleHacks applications"
+
+  format = "DOCKER"
+  mode   = "STANDARD_REPOSITORY"
+}
+
+resource "google_artifact_registry_repository_iam_binding" "internal_all_users" {
+  project    = google_artifact_registry_repository.internal.project
+  location   = google_artifact_registry_repository.internal.location
+  repository = google_artifact_registry_repository.internal.name
+
+  role    = "roles/artifactregistry.reader"
+  members = ["allUsers"]
+}
+
 module "mailer" {
   source = "./modules/mailer"
   providers = {
     aws.us_east_1 = aws.us_east_1
   }
 
-  github_actions_provider = module.github_actions.aws
+  image_repository        = google_artifact_registry_repository.internal
+  github_actions_provider = module.github_actions.google
+
+  github_actions_provider_aws = module.github_actions.aws
 }
