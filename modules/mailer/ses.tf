@@ -19,7 +19,7 @@ data "aws_iam_policy_document" "ses" {
 
   statement {
     effect    = "Allow"
-    actions   = ["ses:ListEmailIdentities"]
+    actions   = ["ses:ListEmailIdentities", "ses:GetAccount"]
     resources = ["*"]
   }
 }
