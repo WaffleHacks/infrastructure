@@ -41,10 +41,10 @@ data "aws_iam_policy_document" "exports" {
   }
 }
 
-resource "doppler_secret" "api_resume_bucket" {
+resource "doppler_secret" "api_export_bucket" {
   project = "application-portal"
   config  = "prd"
 
-  name  = "RESUME_BUCKET"
+  name  = "EXPORT_BUCKET"
   value = aws_s3_bucket.exports.bucket
 }
