@@ -9,6 +9,12 @@ resource "aws_iam_user_policy" "resumes" {
   policy = data.aws_iam_policy_document.resumes.json
 }
 
+resource "aws_iam_user_policy" "exports" {
+  name   = "ExportsAccess"
+  user   = aws_iam_user.api.name
+  policy = data.aws_iam_policy_document.exports.json
+}
+
 resource "aws_iam_access_key" "api" {
   user = aws_iam_user.api.name
 }
