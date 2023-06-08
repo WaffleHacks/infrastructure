@@ -98,6 +98,4 @@ module "mailer" {
 
   image_repository        = google_artifact_registry_repository.internal
   github_actions_provider = module.github_actions.google
-
-  github_actions_provider_aws = module.github_actions.aws
 }
