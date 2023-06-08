@@ -99,3 +99,13 @@ module "mailer" {
   image_repository        = google_artifact_registry_repository.internal
   github_actions_provider = module.github_actions.google
 }
+
+module "wafflebot" {
+  source = "./modules/wafflebot"
+  providers = {
+    aws.us_east_1 = aws.us_east_1
+  }
+
+  image_repository        = google_artifact_registry_repository.internal
+  github_actions_provider = module.github_actions.google
+}
