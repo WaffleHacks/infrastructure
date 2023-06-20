@@ -109,3 +109,13 @@ module "wafflebot" {
   image_repository        = google_artifact_registry_repository.internal
   github_actions_provider = module.github_actions.google
 }
+
+module "nats" {
+  source = "./modules/nats"
+  providers = {
+    aws.us_east_1 = aws.us_east_1
+  }
+
+  image_repository        = google_artifact_registry_repository.internal
+  github_actions_provider = module.github_actions.google
+}
