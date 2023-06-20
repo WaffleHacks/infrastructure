@@ -18,13 +18,21 @@ resource "google_artifact_registry_repository_iam_binding" "all_users" {
 module "service_account" {
   source = "../image-registry-service-account"
 
-  repository                = google_artifact_registry_repository.portal
   workload_identity_pool_id = var.github_actions_provider.id
 
   github = {
     owner = "WaffleHacks"
     name  = "application-portal"
   }
+}
+
+resource "google_artifact_registry_repository_iam_binding" "publish" {
+  project    = google_artifact_registry_repository.portal.project
+  location   = google_artifact_registry_repository.portal.location
+  repository = google_artifact_registry_repository.portal.name
+
+  role    = "roles/artifactregistry.writer"
+  members = [module.service_account.member]
 }
 
 resource "doppler_secret" "repository" {

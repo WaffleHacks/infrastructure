@@ -96,7 +96,6 @@ module "mailer" {
     aws.us_east_1 = aws.us_east_1
   }
 
-  image_repository        = google_artifact_registry_repository.internal
   github_actions_provider = module.github_actions.google
 }
 
@@ -106,7 +105,6 @@ module "wafflebot" {
     aws.us_east_1 = aws.us_east_1
   }
 
-  image_repository        = google_artifact_registry_repository.internal
   github_actions_provider = module.github_actions.google
 }
 
@@ -116,6 +114,18 @@ module "nats" {
     aws.us_east_1 = aws.us_east_1
   }
 
-  image_repository        = google_artifact_registry_repository.internal
   github_actions_provider = module.github_actions.google
+}
+
+resource "google_artifact_registry_repository_iam_binding" "interanl_service_accounts" {
+  project    = google_artifact_registry_repository.internal.project
+  location   = google_artifact_registry_repository.internal.location
+  repository = google_artifact_registry_repository.internal.name
+
+  role = "roles/artifactregistry.writer"
+  members = [
+    module.nats.service_account_member,
+    module.wafflebot.service_account_member,
+    module.mailer.service_account_member,
+  ]
 }

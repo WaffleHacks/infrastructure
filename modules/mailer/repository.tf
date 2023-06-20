@@ -1,7 +1,6 @@
 module "service_account" {
   source = "../image-registry-service-account"
 
-  repository                = var.image_repository
   workload_identity_pool_id = var.github_actions_provider.id
 
   github = {

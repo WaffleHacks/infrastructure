@@ -28,12 +28,3 @@ resource "google_service_account_iam_policy" "workload_identity" {
 
   policy_data = data.google_iam_policy.workload_identity.policy_data
 }
-
-resource "google_artifact_registry_repository_iam_binding" "service_account" {
-  project    = var.repository.project
-  location   = var.repository.location
-  repository = var.repository.name
-
-  role    = "roles/artifactregistry.writer"
-  members = [google_service_account.github_publish.member]
-}
